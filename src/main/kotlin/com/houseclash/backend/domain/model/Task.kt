@@ -13,16 +13,7 @@ data class Task(
     val houseId: Long,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val completedAt: LocalDateTime? = null
-) {
-
-    fun canBeCompletedBy(userId: Long): Boolean {
-        return assignedTo == userId && status == TaskStatus.ASSIGNED
-    }
-
-    fun applyMarketInflation(amount: Int = 1): Task {
-        return this.copy(kudosValue = this.kudosValue + amount)
-    }
-}
+)
 
 enum class Effort(val baseKudos: Int) {
     LOW(2),      // Simple tasks, such as taking out the trash or doing the dishes
