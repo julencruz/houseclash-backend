@@ -23,4 +23,9 @@ data class User(
             )
         }
     }
+
+    fun joinHouse(houseId: Long): User {
+        require(this.houseId == null) { "User already belongs to a house" }
+        return this.copy(houseId = houseId)
+    }
 }

@@ -6,5 +6,6 @@ interface HouseRepository {
 
     fun save(house: House) : House
     fun findById(id: Long): House?
+    fun findByInviteCode(inviteCode: String) : House?
     fun delete(house: House)
 }
