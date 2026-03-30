@@ -9,7 +9,7 @@ data class Task(
     val effort: Effort,
     val status: TaskStatus = TaskStatus.OPEN,
     val kudosValue: Int = effort.baseKudos,
-    val assignedTo: Long? = null, 
+    val assignedTo: Long? = null,
     val houseId: Long,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val completedAt: LocalDateTime? = null

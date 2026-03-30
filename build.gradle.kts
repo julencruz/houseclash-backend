@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "4.0.5"
 	id("io.spring.dependency-management") version "1.1.7"
 	kotlin("plugin.jpa") version "2.2.21"
+	id("com.diffplug.spotless") version "6.25.0"
 }
 
 group = "com.houseclash"
@@ -12,6 +13,30 @@ version = "0.0.1-SNAPSHOT"
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+spotless {
+	kotlin {
+		target("src/**/*.kt")
+		trimTrailingWhitespace()
+		endWithNewline()
+		indentWithSpaces(4)
+	}
+	kotlinGradle {
+		target("**/*.gradle.kts")
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
+	format("sql") {
+		target("src/**/*.sql")
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
+	yaml {
+		target("**/*.yml")
+		trimTrailingWhitespace()
+		endWithNewline()
 	}
 }
 
