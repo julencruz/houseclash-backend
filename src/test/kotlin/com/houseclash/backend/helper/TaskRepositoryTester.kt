@@ -6,10 +6,17 @@ import com.houseclash.backend.domain.port.TaskRepository
 
 class TaskRepositoryTester : TaskRepository {
     private val tasks = mutableListOf<Task>()
+    private var idCounter = 1L
 
     override fun save(task: Task): Task {
-        tasks.add(task)
-        return task
+        val savedTask = if (task.id == null) {
+            task.copy(id = idCounter++)
+        } else {
+            task
+        }
+        tasks.removeIf { it.id == savedTask.id }
+        tasks.add(savedTask)
+        return savedTask
     }
 
     override fun findById(id: Long): Task? {

@@ -27,6 +27,15 @@ data class Task(
             )
         }
     }
+
+    fun assignTaskToUser(userId: Long): Task {
+        require(status == TaskStatus.OPEN) { "Task is not open for assignment" }
+        require(assignedTo == null) { "Task is already assigned" }
+        return this.copy(
+            assignedTo = userId,
+            status = TaskStatus.ASSIGNED
+        )
+    }
 }
 
 enum class Recurrence {
