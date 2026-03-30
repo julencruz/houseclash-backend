@@ -1,0 +1,13 @@
+package com.houseclash.backend.domain.port
+
+import com.houseclash.backend.domain.model.User
+
+interface UserRepository {
+
+    fun saveUser(user : User): User
+    fun findByHouseId(houseId: Long) : List<User>
+    fun findById(id: Long): User?
+    fun findByEmail(email: String) : List<User>
+    fun delete(id: Long)
+
+}
