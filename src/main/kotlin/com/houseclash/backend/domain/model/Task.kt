@@ -1,6 +1,7 @@
 package com.houseclash.backend.domain.model
 
 import java.time.LocalDateTime
+import java.time.Period
 
 data class Task(
     val id: Long? = null,
@@ -36,13 +37,22 @@ data class Task(
             status = TaskStatus.ASSIGNED
         )
     }
+
+    fun completeTask() : Task {
+        require(status == TaskStatus.ASSIGNED) { "Task must be assigned to be completed" }
+        require(assignedTo != null) { "Task must be assigned to a user" }
+        return this.copy(
+            status = TaskStatus.PENDING_REVIEW,
+            completedAt = LocalDateTime.now()
+        )
+    }
 }
 
-enum class Recurrence {
-    DAILY,
-    WEEKLY,
-    BIWEEKLY,
-    MONTHLY
+enum class Recurrence(val period: Period) {
+    DAILY(Period.ofDays(1)),
+    WEEKLY(Period.ofWeeks(1)),
+    BIWEEKLY(Period.ofWeeks(2)),
+    MONTHLY(Period.ofMonths(1))
 }
 
 enum class Effort(val baseKudos: Int) {
