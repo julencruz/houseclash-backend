@@ -35,6 +35,12 @@ class TaskRepositoryTester : TaskRepository {
         return tasks.filter { it.assignedTo == userId }
     }
 
+    override fun findRecurringTasksDue(): List<Task> {
+        return tasks.filter {
+            it.recurrence != null && it.isDueForReset()
+        }
+    }
+
     override fun delete(id: Long) {
         tasks.removeIf { it.id == id }
     }
