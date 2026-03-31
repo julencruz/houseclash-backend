@@ -29,7 +29,7 @@ class CreateTaskUsecaseTest {
         val user = registerUsecase.execute("Test", "test@email.com", "Password1")
         val house = createHouseUsecase.execute(user.id!!, "Pis de Gràcia")
         val task = usecase.execute("Comprar pa", null, Effort.MEDIUM, null, house.id!!)
-        assertEquals(4, task.kudosValue)  // MEDIUM = 4 baseKudos
+        assertEquals(4, task.kudosValue)
     }
 
     @Test
