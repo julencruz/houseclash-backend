@@ -110,4 +110,13 @@ data class Task(
             kudosValue = effort.baseKudos
         )
     }
+
+    fun applyMarketInflation(): Task {
+        val increment = when (effort) {
+            Effort.LOW -> 1
+            Effort.MEDIUM -> 2
+            Effort.HIGH -> 3
+        }
+        return this.copy(kudosValue = kudosValue + increment)
+    }
 }
