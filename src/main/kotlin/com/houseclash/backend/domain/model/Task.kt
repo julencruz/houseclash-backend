@@ -81,23 +81,23 @@ data class Task(
         )
     }
 
-    fun currentCycleStart(): LocalDateTime? {
+    fun currentCycleStart(now: LocalDateTime = LocalDateTime.now()): LocalDateTime? {
         if (recurrence == null) return null
         var cycleStart = createdAt
-        while (cycleStart.plus(recurrence.period).isBefore(LocalDateTime.now())) {
+        while (cycleStart.plus(recurrence.period).isBefore(now)) {
             cycleStart = cycleStart.plus(recurrence.period)
         }
         return cycleStart
     }
 
-    fun isDueForReset(): Boolean {
+    fun isDueForReset(now: LocalDateTime = LocalDateTime.now()): Boolean {
         if (recurrence == null) return false
         val isClosedStatus = status in listOf(
             TaskStatus.APPROVED,
             TaskStatus.AUTO_APPROVED,
             TaskStatus.DISPUTED
         )
-        val completedInPreviousCycle = completedAt?.isBefore(currentCycleStart()!!) ?: false
+        val completedInPreviousCycle = completedAt?.isBefore(currentCycleStart(now)!!) ?: false
         return isClosedStatus && completedInPreviousCycle
     }
 
