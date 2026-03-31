@@ -28,4 +28,9 @@ data class User(
         require(this.houseId == null) { "User already belongs to a house" }
         return this.copy(houseId = houseId)
     }
+
+    fun addKudos(kudos: Int): User {
+        require(kudos > 0) { "Kudos to add must be positive" }
+        return this.copy(kudosBalance = this.kudosBalance + kudos)
+    }
 }

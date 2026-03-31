@@ -31,7 +31,6 @@ data class Task(
 
     fun assignTaskToUser(userId: Long): Task {
         require(status == TaskStatus.OPEN) { "Task is not open for assignment" }
-        require(assignedTo == null) { "Task is already assigned" }
         return this.copy(
             assignedTo = userId,
             status = TaskStatus.ASSIGNED
@@ -40,10 +39,23 @@ data class Task(
 
     fun completeTask() : Task {
         require(status == TaskStatus.ASSIGNED) { "Task must be assigned to be completed" }
-        require(assignedTo != null) { "Task must be assigned to a user" }
         return this.copy(
             status = TaskStatus.PENDING_REVIEW,
             completedAt = LocalDateTime.now()
+        )
+    }
+
+    fun approveTask() : Task {
+        require(status == TaskStatus.PENDING_REVIEW) { "Task is not pending review" }
+        return this.copy(
+            status = TaskStatus.APPROVED
+        )
+    }
+
+    fun disputeTask() : Task {
+        require(status == TaskStatus.PENDING_REVIEW) { "Task is not pending review" }
+        return this.copy(
+            status = TaskStatus.DISPUTED
         )
     }
 }
