@@ -47,8 +47,8 @@ class RecurringTaskSchedulerUsecaseTest {
             Task.create("Tirar basura", null, Effort.LOW, Recurrence.WEEKLY, house.id!!)
                 .copy(
                     status = TaskStatus.APPROVED,
-                    completedAt = LocalDateTime.now().minusDays(2),
-                    createdAt = LocalDateTime.now().minusDays(2)
+                    completedAt = LocalDateTime.now().minusDays(1),
+                    createdAt = LocalDateTime.now().minusDays(1)
                 )
         )
 
