@@ -3,6 +3,28 @@ package com.houseclash.backend.domain.model
 import java.time.LocalDateTime
 import java.time.Period
 
+enum class Recurrence(val period: Period) {
+    DAILY(Period.ofDays(1)),
+    WEEKLY(Period.ofWeeks(1)),
+    BIWEEKLY(Period.ofWeeks(2)),
+    MONTHLY(Period.ofMonths(1))
+}
+
+enum class Effort(val baseKudos: Int) {
+    LOW(2),      // Simple tasks, such as taking out the trash or doing the dishes
+    MEDIUM(4),   // Moderate tasks, such as cleaning the bathroom or doing the groceries
+    HIGH(8)      // Complex tasks, such as painting a room or repairing an appliance
+}
+
+enum class TaskStatus {
+    OPEN,            // Available for assignment
+    ASSIGNED,        // The user has accepted the task
+    PENDING_REVIEW,  // Pending validation
+    APPROVED,        // Validated by peers
+    AUTO_APPROVED,   // Automatically validated after 24h
+    DISPUTED         // Someone has denied the validation
+}
+
 data class Task(
     val id: Long? = null,
     val title: String,
@@ -58,26 +80,34 @@ data class Task(
             status = TaskStatus.DISPUTED
         )
     }
-}
 
-enum class Recurrence(val period: Period) {
-    DAILY(Period.ofDays(1)),
-    WEEKLY(Period.ofWeeks(1)),
-    BIWEEKLY(Period.ofWeeks(2)),
-    MONTHLY(Period.ofMonths(1))
-}
+    fun currentCycleStart(now: LocalDateTime = LocalDateTime.now()): LocalDateTime? {
+        if (recurrence == null) return null
+        var cycleStart = createdAt
+        while (cycleStart.plus(recurrence.period).isBefore(now)) {
+            cycleStart = cycleStart.plus(recurrence.period)
+        }
+        return cycleStart
+    }
 
-enum class Effort(val baseKudos: Int) {
-    LOW(2),      // Simple tasks, such as taking out the trash or doing the dishes
-    MEDIUM(4),   // Moderate tasks, such as cleaning the bathroom or doing the groceries
-    HIGH(8)      // Complex tasks, such as painting a room or repairing an appliance
-}
+    fun isDueForReset(now: LocalDateTime = LocalDateTime.now()): Boolean {
+        if (recurrence == null) return false
+        val isClosedStatus = status in listOf(
+            TaskStatus.APPROVED,
+            TaskStatus.AUTO_APPROVED,
+            TaskStatus.DISPUTED
+        )
+        val completedInPreviousCycle = completedAt?.isBefore(currentCycleStart(now)!!) ?: false
+        return isClosedStatus && completedInPreviousCycle
+    }
 
-enum class TaskStatus {
-    OPEN,            // Available for assignment
-    ASSIGNED,        // The user has accepted the task
-    PENDING_REVIEW,  // Pending validation
-    APPROVED,        // Validated by peers
-    AUTO_APPROVED,   // Automatically validated after 24h
-    DISPUTED         // Someone has denied the validation
+    fun resetForNextCycle(): Task {
+        require(recurrence != null) { "Task is not recurrent" }
+        return this.copy(
+            status = TaskStatus.OPEN,
+            assignedTo = null,
+            completedAt = null,
+            kudosValue = effort.baseKudos
+        )
+    }
 }
