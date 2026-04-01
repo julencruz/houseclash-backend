@@ -11,6 +11,7 @@ interface TaskRepository {
     fun findByHouseIdAndStatus(houseId: Long, status: TaskStatus) : List<Task>
     fun findByAssignedTo(userId: Long) : List<Task>
     fun findRecurringTasksDue(): List<Task>
+    fun deleteByHouseId(houseId: Long)
     fun delete(id: Long)
 
 }
