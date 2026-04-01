@@ -49,6 +49,7 @@ data class Task(
                 recurrence = recurrence,
                 houseId = houseId
                 houseId = houseId,
+                categoryId = categoryId
             )
         }
     }
