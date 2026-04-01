@@ -9,7 +9,16 @@ data class Card (
     val userId: Long,
     val type: CardType,
     val acquiredAt: LocalDateTime = LocalDateTime.now()
-)
+) {
+    companion object {
+        fun create(userId: Long, cardType: CardType): Card {
+            return Card(
+                userId = userId,
+                type = cardType
+            )
+        }
+    }
+}
 
 enum class CardType(val effect: CardEffect, val probability: Int) {
     EXAMPLE_CARD(ExampleEffect(), 100)
