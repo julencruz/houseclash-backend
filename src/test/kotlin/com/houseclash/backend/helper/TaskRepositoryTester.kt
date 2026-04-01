@@ -41,6 +41,11 @@ class TaskRepositoryTester : TaskRepository {
         }
     }
 
+    override fun deleteByHouseId(houseId: Long) {
+        val keysToRemove = tasks.filter { it.houseId == houseId }
+        keysToRemove.forEach { tasks.remove(it) }
+    }
+
     override fun delete(id: Long) {
         tasks.removeIf { it.id == id }
     }

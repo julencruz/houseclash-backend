@@ -26,6 +26,11 @@ class CategoryRepositoryTester : CategoryRepository {
         return categories.filter { it.houseId == houseId }
     }
 
+    override fun deleteByHouseId(houseId: Long) {
+        val keysToRemove = categories.filter { it.houseId == houseId }
+        keysToRemove.forEach { categories.remove(it) }
+    }
+
     override fun delete(id: Long) {
         categories.removeIf { it.id == id }
     }
