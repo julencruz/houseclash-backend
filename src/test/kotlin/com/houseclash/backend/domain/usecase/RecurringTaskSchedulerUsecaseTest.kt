@@ -26,7 +26,7 @@ class RecurringTaskSchedulerUsecaseTest {
     @Test
     fun `should reset approved recurring task`() {
         val task = taskRepository.save(
-            Task.create("Tirar basura", null, Effort.LOW, Recurrence.WEEKLY, house.id!!)
+            Task.create("Tirar basura", null, Effort.LOW, Recurrence.WEEKLY, house.id!!, 1L)
                 .copy(
                     status = TaskStatus.APPROVED,
                     completedAt = FIXED_NOW.minusDays(8),
@@ -46,7 +46,7 @@ class RecurringTaskSchedulerUsecaseTest {
     @Test
     fun `should not reset task that is not due yet`() {
         val task = taskRepository.save(
-            Task.create("Tirar basura", null, Effort.LOW, Recurrence.WEEKLY, house.id!!)
+            Task.create("Tirar basura", null, Effort.LOW, Recurrence.WEEKLY, house.id!!, 1L)
                 .copy(
                     status = TaskStatus.APPROVED,
                     completedAt = FIXED_NOW.minusDays(1),
@@ -63,7 +63,7 @@ class RecurringTaskSchedulerUsecaseTest {
     @Test
     fun `should not reset non recurring task`() {
         val task = taskRepository.save(
-            Task.create("Tirar basura", null, Effort.LOW, null, house.id!!)
+            Task.create("Tirar basura", null, Effort.LOW, null, house.id!!, 1L)
                 .copy(status = TaskStatus.APPROVED)
         )
 
@@ -76,7 +76,7 @@ class RecurringTaskSchedulerUsecaseTest {
     @Test
     fun `should not reset task still in progress`() {
         val task = taskRepository.save(
-            Task.create("Tirar basura", null, Effort.LOW, Recurrence.WEEKLY, house.id!!)
+            Task.create("Tirar basura", null, Effort.LOW, Recurrence.WEEKLY, house.id!!, 1L)
                 .copy(status = TaskStatus.ASSIGNED)
         )
 
@@ -89,7 +89,7 @@ class RecurringTaskSchedulerUsecaseTest {
     @Test
     fun `should reset disputed recurring task`() {
         val task = taskRepository.save(
-            Task.create("Tirar basura", null, Effort.LOW, Recurrence.WEEKLY, house.id!!)
+            Task.create("Tirar basura", null, Effort.LOW, Recurrence.WEEKLY, house.id!!, 1L)
                 .copy(
                     status = TaskStatus.DISPUTED,
                     completedAt = FIXED_NOW.minusDays(8),
