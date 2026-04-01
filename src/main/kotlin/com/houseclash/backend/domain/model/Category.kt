@@ -12,4 +12,13 @@ data class Category(
             return Category(houseId = houseId, name = name, description = description)
         }
     }
+
+    fun update(newName: String? = null, newDescription: String? = null): Category {
+        newName?.let { require(it.isNotBlank()) { "Category name cannot be blank" } }
+
+        return this.copy(
+            name = newName ?: this.name,
+            description = newDescription ?: this.description
+        )
+    }
 }

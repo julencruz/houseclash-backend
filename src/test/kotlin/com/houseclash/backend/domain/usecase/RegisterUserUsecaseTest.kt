@@ -25,7 +25,7 @@ class RegisterUserUsecaseTest {
         usecase.execute("Test", "test@email.com", "Password1")
 
         assertThrows(IllegalArgumentException::class.java) {
-            usecase.execute("Otro", "test@email.com", "Password3")
+            usecase.execute("Altre", "test@email.com", "Password3")
         }
     }
 }
