@@ -30,6 +30,11 @@ class CardRepositoryTester : CardRepository {
         return cards.filter { it.userId == userId && it.type == type }
     }
 
+    override fun deleteByUserId(userId: Long) {
+        val keysToRemove = cards.filter { it.userId == userId }
+        keysToRemove.forEach { cards.remove(it) }
+    }
+
     override fun findById(cardId: Long): Card? {
         return cards.find { it.id == cardId }
     }
