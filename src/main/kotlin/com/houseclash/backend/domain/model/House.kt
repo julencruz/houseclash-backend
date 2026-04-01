@@ -26,4 +26,13 @@ data class House(
             return (1..6).map { chars.random() }.joinToString("")
         }
     }
+
+    fun update(newName: String? = null, newDescription: String? = null): House {
+        newName?.let { require(it.isNotBlank()) { "House name cannot be blank" } }
+
+        return this.copy(
+            name = newName ?: this.name,
+            description = newDescription ?: this.description,
+        )
+    }
 }

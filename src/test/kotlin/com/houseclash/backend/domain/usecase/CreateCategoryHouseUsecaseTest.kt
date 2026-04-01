@@ -4,10 +4,8 @@ import com.houseclash.backend.helper.CategoryRepositoryTester
 import com.houseclash.backend.helper.HouseRepositoryTester
 import com.houseclash.backend.helper.TestDataFactory
 import com.houseclash.backend.helper.UserRepositoryTester
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class CreateCategoryHouseUsecaseTest {
     private val houseRepository = HouseRepositoryTester()
@@ -39,7 +37,7 @@ class CreateCategoryHouseUsecaseTest {
 
         val hacker = TestDataFactory.createUser(userRepository, username = "Hacker", email = "h@mail.com")
 
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
             usecase.execute(hacker.id!!, house.id!!, "Menjador Hacker")
         }
         assertEquals("User does not belong to this house", exception.message)
@@ -52,7 +50,7 @@ class CreateCategoryHouseUsecaseTest {
 
         TestDataFactory.createCategory(categoryRepository, house.id!!, "Bany")
 
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
             usecase.execute(user.id!!, house.id, "bany")
         }
         assertEquals("Category 'bany' already exists in this house", exception.message)
@@ -62,7 +60,7 @@ class CreateCategoryHouseUsecaseTest {
     fun `should throw when house does not exist`() {
         val user = TestDataFactory.createUser(userRepository)
 
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
             usecase.execute(user.id!!, 999L, "Menjador")
         }
         assertEquals("House not found for id: 999", exception.message)

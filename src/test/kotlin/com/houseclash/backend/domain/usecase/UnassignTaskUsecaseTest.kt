@@ -5,10 +5,8 @@ import com.houseclash.backend.helper.HouseRepositoryTester
 import com.houseclash.backend.helper.TaskRepositoryTester
 import com.houseclash.backend.helper.TestDataFactory
 import com.houseclash.backend.helper.UserRepositoryTester
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class UnassignTaskUsecaseTest {
     private val userRepository = UserRepositoryTester()
@@ -44,7 +42,7 @@ class UnassignTaskUsecaseTest {
             task.copy(status = TaskStatus.ASSIGNED, assignedTo = user.id!!, isForced = true)
         )
 
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
             usecase.execute(user.id, forcedTask.id!!)
         }
         assertEquals("Cannot unassign forced task", exception.message)
@@ -60,7 +58,7 @@ class UnassignTaskUsecaseTest {
                 .copy(status = TaskStatus.ASSIGNED, assignedTo = owner.id!!)
         )
 
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
             usecase.execute(hacker.id!!, task.id!!)
         }
         assertEquals("Cannot unassign task assigned to another user", exception.message)
@@ -73,7 +71,7 @@ class UnassignTaskUsecaseTest {
 
         val corruptedTask = taskRepository.save(openTask.copy(assignedTo = user.id!!))
 
-        val exception = assertThrows<IllegalArgumentException> {
+        val exception = assertThrows(IllegalArgumentException::class.java) {
             usecase.execute(user.id, corruptedTask.id!!)
         }
         assertEquals("Task is not currently assigned", exception.message)

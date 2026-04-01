@@ -7,11 +7,8 @@ import com.houseclash.backend.helper.HouseRepositoryTester
 import com.houseclash.backend.helper.TaskRepositoryTester
 import com.houseclash.backend.helper.TestDataFactory
 import com.houseclash.backend.helper.UserRepositoryTester
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 
 class LeaveHouseUsecaseTest {
     private val userRepository = UserRepositoryTester()
@@ -24,7 +21,7 @@ class LeaveHouseUsecaseTest {
 
     @Test
     fun `should throw when user does not exist`() {
-        assertThrows<IllegalArgumentException> {
+        assertThrows(IllegalArgumentException::class.java) {
             usecase.execute(999L)
         }
     }
@@ -33,7 +30,7 @@ class LeaveHouseUsecaseTest {
     fun `should throw when user does not belong to any house`() {
         val userWithoutHouse = TestDataFactory.createUser(userRepository)
 
-        assertThrows<IllegalArgumentException> {
+        assertThrows(IllegalArgumentException::class.java) {
             usecase.execute(userWithoutHouse.id!!)
         }
     }

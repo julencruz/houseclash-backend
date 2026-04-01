@@ -53,4 +53,17 @@ data class User(
         val newBalance = if (kudosBalance - amount < 0) 0 else kudosBalance - amount
         return this.copy(kudosBalance = newBalance)
     }
+
+    fun update(
+        newUsername: String? = null,
+        newPasswordHash: String? = null
+    ): User {
+        newUsername?.let { require(it.isNotBlank()) { "Username cannot be blank" } }
+        newPasswordHash?.let { require(it.isNotBlank()) { "Password hash cannot be blank" } }
+
+        return this.copy(
+            username = newUsername ?: this.username,
+            passwordHash = newPasswordHash ?: this.passwordHash
+        )
+    }
 }

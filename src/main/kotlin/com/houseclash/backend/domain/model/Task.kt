@@ -159,4 +159,28 @@ data class Task(
 
         return this.copy(kudosValue = kudosValue + value)
     }
+
+    fun update(
+        newTitle: String? = null,
+        newDescription: String? = null,
+        newEffort: Effort? = null,
+        newRecurrence: Recurrence? = null,
+        newCategoryId: Long? = null
+    ): Task {
+        val updatedEffort = newEffort ?: this.effort
+        val updatedKudosValue = if (newEffort != null && newEffort != this.effort) {
+            newEffort.baseKudos
+        } else {
+            this.kudosValue
+        }
+
+        return this.copy(
+            title = newTitle ?: this.title,
+            description = newDescription ?: this.description,
+            effort = updatedEffort,
+            kudosValue = updatedKudosValue,
+            recurrence = newRecurrence ?: this.recurrence,
+            categoryId = newCategoryId ?: this.categoryId
+        )
+    }
 }
