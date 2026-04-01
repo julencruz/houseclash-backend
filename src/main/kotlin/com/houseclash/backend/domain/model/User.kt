@@ -29,6 +29,14 @@ data class User(
         return this.copy(houseId = houseId)
     }
 
+    fun leaveHouse(houseId: Long): User {
+        require(this.houseId == houseId) { "User is not in this house" }
+        return this.copy(
+            houseId = null,
+            kudosBalance = 0
+        )
+    }
+
     fun addKudos(kudos: Int): User {
         require(kudos > 0) { "Kudos to add must be positive" }
         return this.copy(kudosBalance = this.kudosBalance + kudos)
