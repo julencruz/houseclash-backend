@@ -25,12 +25,21 @@ object TestDataFactory {
         return house
     }
 
+    fun createCategory(
+        categoryRepository: CategoryRepositoryTester,
+        houseId: Long,
+        name: String = "Test Category"
+    ): Category {
+        return categoryRepository.save(Category.create(houseId, name))
+    }
+
     fun createTask(
         taskRepository: TaskRepositoryTester,
         houseId: Long,
         title: String = "Test Task",
-        effort: Effort = Effort.MEDIUM
+        effort: Effort = Effort.MEDIUM,
+        categoryId: Long = 1L
     ): Task {
-        return taskRepository.save(Task.create(title, null, effort, null, houseId))
+        return taskRepository.save(Task.create(title, null, effort, null, houseId, categoryId))
     }
 }
