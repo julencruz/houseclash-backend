@@ -14,6 +14,14 @@ object TestDataFactory {
         return repository.save(User.create(username, email, passwordHash).copy(kudosBalance = kudosBalance))
     }
 
+    fun createCard(
+        repository: CardRepositoryTester,
+        userId: Long,
+        type: CardType = CardType.HOUSE_BONUS
+    ): Card {
+        return repository.save(Card.create(userId = userId, cardType = type))
+    }
+
     fun createHouse(
         houseRepository: HouseRepositoryTester,
         userRepository: UserRepositoryTester,
