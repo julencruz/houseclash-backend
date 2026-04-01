@@ -47,7 +47,6 @@ data class Task(
                 description = description,
                 effort = effort,
                 recurrence = recurrence,
-                houseId = houseId
                 houseId = houseId,
                 categoryId = categoryId
             )
