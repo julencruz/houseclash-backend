@@ -35,6 +35,7 @@ data class Task(
     val assignedTo: Long? = null,
     val houseId: Long,
     val categoryId: Long,
+    val isForced: Boolean = false,
     val recurrence: Recurrence? = null,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val completedAt: LocalDateTime? = null
@@ -58,6 +59,25 @@ data class Task(
         return this.copy(
             assignedTo = userId,
             status = TaskStatus.ASSIGNED
+        )
+    }
+
+    fun unassignTask(userId: Long): Task {
+        require(status == TaskStatus.ASSIGNED) { "Only assigned tasks can be unassigned" }
+        require(!isForced) { "Cannot unassign a task that was forced upon you" }
+        require(userId == assignedTo) { "Only the user assigned to the task can unassign it" }
+        return this.copy(
+            status = TaskStatus.OPEN,
+            assignedTo = null
+        )
+    }
+
+    fun forceAssignTo(userId: Long): Task {
+        require(status == TaskStatus.OPEN) { "Only open tasks can be force-assigned" }
+        return this.copy(
+            status = TaskStatus.ASSIGNED,
+            assignedTo = userId,
+            isForced = true
         )
     }
 
@@ -129,12 +149,14 @@ data class Task(
         )
     }
 
-    fun applyMarketInflation(): Task {
-        val increment = when (effort) {
-            Effort.LOW -> 1
-            Effort.MEDIUM -> 2
-            Effort.HIGH -> 3
-        }
-        return this.copy(kudosValue = kudosValue + increment)
+    fun applyMarketInflation(increment: Int? = null): Task {
+        val value = increment
+            ?: when (effort) {
+                Effort.LOW -> 1
+                Effort.MEDIUM -> 2
+                Effort.HIGH -> 3
+            }
+
+        return this.copy(kudosValue = kudosValue + value)
     }
 }
