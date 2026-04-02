@@ -6,13 +6,19 @@ import com.houseclash.backend.domain.model.Task
 import com.houseclash.backend.domain.port.CategoryRepository
 import com.houseclash.backend.domain.port.HouseRepository
 import com.houseclash.backend.domain.port.TaskRepository
+import com.houseclash.backend.domain.port.UserRepository
 
 class CreateTaskUsecase (
     private val taskRepository : TaskRepository,
     private val houseRepository: HouseRepository,
-    private val categoryRepository: CategoryRepository
+    private val categoryRepository: CategoryRepository,
+    private val userRepository: UserRepository
 ) {
-    fun execute(title: String, description: String? = null, effort: Effort, recurrence: Recurrence? = null, houseId: Long, categoryId: Long): Task {
+    fun execute(userId: Long, title: String, description: String? = null, effort: Effort, recurrence: Recurrence? = null, houseId: Long, categoryId: Long): Task {
+        val user = userRepository.findById(userId)
+        require(user != null) { "User not found" }
+        require(user.houseId == houseId) { "User does not belong to this house" }
+
         require(houseRepository.findById(houseId) != null) { "House not found for id: $houseId" }
         val category = categoryRepository.findById(categoryId)
         require(category != null) { "Category doesnt exist" }
