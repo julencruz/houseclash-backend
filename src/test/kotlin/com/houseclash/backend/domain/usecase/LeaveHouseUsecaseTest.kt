@@ -29,9 +29,10 @@ class LeaveHouseUsecaseTest {
     @Test
     fun `should throw when user does not belong to any house`() {
         val userWithoutHouse = TestDataFactory.createUser(userRepository)
+        require(userWithoutHouse.id != null)
 
         assertThrows(IllegalArgumentException::class.java) {
-            usecase.execute(userWithoutHouse.id!!)
+            usecase.execute(userWithoutHouse.id)
         }
     }
 
@@ -39,26 +40,29 @@ class LeaveHouseUsecaseTest {
     fun `should completely remove user, reset economy, free tasks and burn cards when OTHER members remain`() {
         val creator = TestDataFactory.createUser(userRepository)
         val house = TestDataFactory.createHouse(houseRepository, userRepository, creator)
+        require(house.id != null)
 
         val leavingUser = TestDataFactory.createUser(userRepository, kudosBalance = 50)
-        val userInHouse = userRepository.save(leavingUser.joinHouse(house.id!!))
+        val userInHouse = userRepository.save(leavingUser.joinHouse(house.id))
+        require(userInHouse.id != null)
 
         val task = TestDataFactory.createTask(taskRepository, house.id)
-        val assignedTask = taskRepository.save(task.forceAssignTo(userInHouse.id!!))
-        val card = TestDataFactory.createCard(cardRepository, userInHouse.id)
+        val assignedTask = taskRepository.save(task.forceAssignTo(userInHouse.id))
+        require(assignedTask.id != null)
+        TestDataFactory.createCard(cardRepository, userInHouse.id)
 
         val result = usecase.execute(userInHouse.id)
 
-        val finalUser = userRepository.findById(userInHouse.id)!!
-        val freedTask = taskRepository.findById(assignedTask.id!!)!!
+        val finalUser = userRepository.findById(userInHouse.id)
+        require(finalUser != null)
+        val freedTask = taskRepository.findById(assignedTask.id)
+        require(freedTask != null)
         val userCards = cardRepository.findByUserId(userInHouse.id)
 
         assertNull(result.houseId)
         assertEquals(0, finalUser.kudosBalance)
-
         assertEquals(TaskStatus.OPEN, freedTask.status)
         assertNull(freedTask.assignedTo)
-
         assertTrue(userCards.isEmpty())
     }
 
@@ -66,15 +70,18 @@ class LeaveHouseUsecaseTest {
     fun `should destroy house, categories and tasks if user is the last member leaving`() {
         val user = TestDataFactory.createUser(userRepository, kudosBalance = 50)
         val house = TestDataFactory.createHouse(houseRepository, userRepository, user)
-        val houseId = house.id!!
+        require(house.id != null)
+        require(user.id != null)
+        val houseId = house.id
 
         TestDataFactory.createCategory(categoryRepository, houseId, "Bany")
         TestDataFactory.createTask(taskRepository, houseId)
-        TestDataFactory.createCard(cardRepository, user.id!!)
+        TestDataFactory.createCard(cardRepository, user.id)
 
         val result = usecase.execute(user.id)
 
-        val finalUser = userRepository.findById(user.id)!!
+        val finalUser = userRepository.findById(user.id)
+        require(finalUser != null)
         assertNull(result.houseId)
         assertNull(finalUser.houseId)
         assertEquals(0, finalUser.kudosBalance)
