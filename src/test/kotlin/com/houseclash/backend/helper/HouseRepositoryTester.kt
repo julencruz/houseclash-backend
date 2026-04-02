@@ -30,4 +30,8 @@ class HouseRepositoryTester : HouseRepository{
     override fun delete(house: House) {
         houses.removeIf { it.id == house.id }
     }
+
+    override fun findAll(): List<House> {
+        return houses.toList()
+    }
 }
