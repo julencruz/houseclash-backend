@@ -23,6 +23,11 @@ data class UserResponse(
     val createdAt: LocalDateTime
 )
 
+data class LoginResponse(
+    val token: String,
+    val user: UserResponse
+)
+
 fun User.toResponse() = UserResponse(
     id = this.id!!,
     username = this.username,
