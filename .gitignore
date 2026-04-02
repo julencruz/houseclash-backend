@@ -17,6 +17,19 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
+### OS Files ###
+.DS_Store
+Thumbs.db
+
+### Docker and Local DB ###
+.docker/
+postgres-data/
+
+### Secrets and Config ###
+.env
+.env.local
+application.yaml
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
