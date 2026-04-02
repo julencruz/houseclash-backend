@@ -25,4 +25,8 @@ class HouseRepositoryAdapter(
     override fun delete(house: House) {
         jpaRepository.deleteById(house.id!!)
     }
+
+    override fun findAll(): List<House> {
+        return jpaRepository.findAll().map { it.toDomain() }
+    }
 }
