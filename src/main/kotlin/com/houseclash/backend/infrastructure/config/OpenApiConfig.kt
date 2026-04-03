@@ -16,7 +16,7 @@ class OpenApiConfig {
         .info(
             Info()
                 .title("HouseClash API")
-                .description("API REST of HouseClash - Household management app")
+                .description("API REST de HouseClash - App gamificada de gestió de tasques")
                 .version("0.0.1")
         )
         .addSecurityItem(SecurityRequirement().addList("Bearer Token"))
@@ -27,7 +27,7 @@ class OpenApiConfig {
                     .type(SecurityScheme.Type.HTTP)
                     .scheme("bearer")
                     .bearerFormat("JWT")
-                    .description("Introduce the JWT obtained in /api/users/login")
+                    .description("Introdueix el token JWT obtingut en /api/users/login")
             )
         )
 }
