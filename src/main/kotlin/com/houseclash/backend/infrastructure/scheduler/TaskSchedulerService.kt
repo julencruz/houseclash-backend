@@ -6,6 +6,7 @@ import com.houseclash.backend.domain.usecase.AutoApproveExpiredTasksUsecase
 import com.houseclash.backend.domain.usecase.RecurringTaskSchedulerUsecase
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import java.util.concurrent.TimeUnit
 
 @Component
 class TaskSchedulerService(
@@ -15,19 +16,19 @@ class TaskSchedulerService(
     private val houseRepository: HouseRepository
 ) {
 
-    @Scheduled(fixedRate = 3600000)
+    @Scheduled(timeUnit = TimeUnit.HOURS, fixedRate = 1)
     fun scheduleRecurringTasks() {
         recurringTaskSchedulerUsecase.execute()
     }
 
-    @Scheduled(fixedRate = 3600000)
+    @Scheduled(timeUnit = TimeUnit.HOURS, fixedRate = 1)
     fun autoApproveExpiredTasks() {
         houseRepository.findAll().forEach { house ->
             autoApproveExpiredTasksUsecase.execute(house.id!!)
         }
     }
 
-    @Scheduled(fixedRate = 3600000)
+    @Scheduled(timeUnit = TimeUnit.HOURS, fixedRate = 6)
     fun applyMarketInflation() {
         houseRepository.findAll().forEach { house ->
             applyMarketInflationUsecase.execute(house.id!!)
