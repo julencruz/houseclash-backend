@@ -4,6 +4,7 @@ import com.houseclash.backend.domain.port.HouseRepository
 import com.houseclash.backend.domain.usecase.ApplyMarketInflationUsecase
 import com.houseclash.backend.domain.usecase.AutoApproveExpiredTasksUsecase
 import com.houseclash.backend.domain.usecase.RecurringTaskSchedulerUsecase
+import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
@@ -15,23 +16,34 @@ class TaskSchedulerService(
     private val applyMarketInflationUsecase: ApplyMarketInflationUsecase,
     private val houseRepository: HouseRepository
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     @Scheduled(timeUnit = TimeUnit.HOURS, fixedRate = 1)
     fun scheduleRecurringTasks() {
+        logger.info("Scheduler: starting recurring tasks generation")
         recurringTaskSchedulerUsecase.execute()
+        logger.info("Scheduler: recurring tasks generation completed")
     }
 
     @Scheduled(timeUnit = TimeUnit.HOURS, fixedRate = 1)
     fun autoApproveExpiredTasks() {
-        houseRepository.findAll().forEach { house ->
+        val houses = houseRepository.findAll()
+        logger.info("Scheduler: auto-approving expired tasks for {} houses", houses.size)
+        houses.forEach { house ->
+            logger.debug("Scheduler: auto-approving expired tasks for house {}", house.id)
             autoApproveExpiredTasksUsecase.execute(house.id!!)
         }
+        logger.info("Scheduler: auto-approve expired tasks completed")
     }
 
     @Scheduled(timeUnit = TimeUnit.HOURS, fixedRate = 6)
     fun applyMarketInflation() {
-        houseRepository.findAll().forEach { house ->
+        val houses = houseRepository.findAll()
+        logger.info("Scheduler: applying market inflation for {} houses", houses.size)
+        houses.forEach { house ->
+            logger.debug("Scheduler: applying market inflation for house {}", house.id)
             applyMarketInflationUsecase.execute(house.id!!)
         }
+        logger.info("Scheduler: market inflation applied")
     }
 }
