@@ -11,7 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 
 class JwtAuthFilterTest {
 
-    private val jwtService = JwtService()
+    private val jwtService = JwtService("houseclash-test-secret-key-for-unit-tests-only")
     private val filter = JwtAuthFilter(jwtService)
 
     @BeforeEach

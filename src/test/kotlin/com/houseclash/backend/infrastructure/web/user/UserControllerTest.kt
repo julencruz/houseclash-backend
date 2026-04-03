@@ -16,7 +16,7 @@ class UserControllerTest {
 
     private val userRepository = UserRepositoryTester()
     private val passwordEncoder = PasswordEncoderTester()
-    private val jwtService = JwtService()
+    private val jwtService = JwtService("houseclash-test-secret-key-for-unit-tests-only")
 
     private val registerUserUsecase = RegisterUserUsecase(userRepository, passwordEncoder)
     private val loginUserUsecase = LoginUserUsecase(userRepository, passwordEncoder)

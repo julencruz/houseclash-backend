@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test
 
 class JwtServiceTest {
 
-    private val jwtService = JwtService()
+    private val jwtService = JwtService("houseclash-test-secret-key-for-unit-tests-only")
 
     @Test
     fun `should generate a non-blank token`() {

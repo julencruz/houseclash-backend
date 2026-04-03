@@ -2,12 +2,16 @@ package com.houseclash.backend.infrastructure.security
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.util.Date
 
 @Service
-class JwtService {
-    private val secretKey = Keys.hmacShaKeyFor("HOUSECLASH_TFG_GEI_UAB_JULEN_CRUZ_2026".toByteArray())
+class JwtService(
+    @Value("\${app.jwt.secret}")
+    private val secret: String
+) {
+    private val secretKey by lazy { Keys.hmacShaKeyFor(secret.toByteArray()) }
 
     fun generateToken(userId: Long): String {
         return Jwts.builder()
