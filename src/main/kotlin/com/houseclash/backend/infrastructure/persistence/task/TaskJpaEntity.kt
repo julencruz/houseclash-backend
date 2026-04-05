@@ -14,6 +14,9 @@ class TaskJpaEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
+    @Version
+    val version: Long = 0,
+
     @Column(nullable = false)
     val title: String,
 
@@ -66,7 +69,8 @@ fun TaskJpaEntity.toDomain(): Task {
         isForced = this.isForced,
         recurrence = this.recurrence,
         createdAt = this.createdAt,
-        completedAt = this.completedAt
+        completedAt = this.completedAt,
+        version = this.version
     )
 }
 
@@ -84,6 +88,7 @@ fun Task.toEntity(): TaskJpaEntity {
         isForced = this.isForced,
         recurrence = this.recurrence,
         createdAt = this.createdAt,
-        completedAt = this.completedAt
+        completedAt = this.completedAt,
+        version = this.version
     )
 }

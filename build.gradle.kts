@@ -5,6 +5,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.7"
 	kotlin("plugin.jpa") version "2.2.21"
 	id("com.diffplug.spotless") version "6.25.0"
+	id("jacoco")
 }
 
 group = "com.houseclash"

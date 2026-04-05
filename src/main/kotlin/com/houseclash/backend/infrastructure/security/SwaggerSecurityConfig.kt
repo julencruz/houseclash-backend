@@ -17,7 +17,7 @@ class SwaggerBasicAuthFilter : OncePerRequestFilter() {
     @Value("\${app.swagger.password}")
     private lateinit var swaggerPassword: String
 
-    private val swaggerPaths = listOf("/swagger-ui", "/v3/api-docs", "/webjars")
+    private val swaggerPaths = listOf("/swagger-ui", "/v3/api-docs", "/webjars", "/api-docs")
 
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -25,7 +25,7 @@ class SwaggerBasicAuthFilter : OncePerRequestFilter() {
         filterChain: FilterChain
     ) {
         val uri = request.requestURI
-        val isSwaggerPath = uri == "/swagger-ui.html" || swaggerPaths.any { uri.startsWith(it) }
+        val isSwaggerPath = uri == "/swagger-ui.html" || uri == "/api-docs" || swaggerPaths.any { uri.startsWith(it) }
 
         if (!isSwaggerPath) {
             filterChain.doFilter(request, response)

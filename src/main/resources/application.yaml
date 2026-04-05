@@ -33,7 +33,7 @@ springdoc:
     path: /v3/api-docs
   swagger-ui:
     enabled: true
-    path: /swagger-ui.html
+    path: /api-docs
     tags-sorter: alpha
     operations-sorter: alpha
 

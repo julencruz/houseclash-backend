@@ -3,6 +3,8 @@ package com.houseclash.backend.infrastructure.persistence.task
 import com.houseclash.backend.domain.model.Task
 import com.houseclash.backend.domain.model.TaskStatus
 import com.houseclash.backend.domain.port.TaskRepository
+import org.springframework.dao.OptimisticLockingFailureException
+import org.springframework.resilience.annotation.Retryable
 import org.springframework.stereotype.Component
 
 @Component
@@ -10,9 +12,14 @@ class TaskRepositoryAdapter(
     private val jpaRepository: SpringDataTaskRepository
 ) : TaskRepository {
 
+    @Retryable(
+        includes = [OptimisticLockingFailureException::class],
+        maxRetries = 3,
+        delay = 100,
+        multiplier = 2.0
+    )
     override fun save(task: Task): Task {
-        val entity = task.toEntity()
-        return jpaRepository.save(entity).toDomain()
+        return jpaRepository.save(task.toEntity()).toDomain()
     }
 
     override fun findById(id: Long): Task? {

@@ -38,7 +38,8 @@ data class Task(
     val isForced: Boolean = false,
     val recurrence: Recurrence? = null,
     val createdAt: LocalDateTime = LocalDateTime.now(),
-    val completedAt: LocalDateTime? = null
+    val completedAt: LocalDateTime? = null,
+    val version: Long = 0
 ) {
     companion object {
         fun create(title: String, description: String?, effort: Effort, recurrence: Recurrence? = null, houseId: Long, categoryId: Long): Task {
