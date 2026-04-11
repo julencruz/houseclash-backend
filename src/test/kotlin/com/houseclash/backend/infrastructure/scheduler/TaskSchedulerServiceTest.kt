@@ -108,11 +108,11 @@ class TaskSchedulerServiceTest {
 
         val taskHouse1 = taskRepository.save(
             Task.create("Tarea C1", null, Effort.LOW, null, house1.id!!, 1L)
-                .copy(status = TaskStatus.PENDING_REVIEW, assignedTo = user1.id, completedAt = LocalDateTime.now().minusHours(25))
+                .copy(status = TaskStatus.PENDING_REVIEW, assignedTo = user1.id, completedAt = LocalDateTime.now().minusHours(73))
         )
         val taskHouse2 = taskRepository.save(
             Task.create("Tarea C2", null, Effort.LOW, null, house2.id!!, 1L)
-                .copy(status = TaskStatus.PENDING_REVIEW, assignedTo = user2.id, completedAt = LocalDateTime.now().minusHours(25))
+                .copy(status = TaskStatus.PENDING_REVIEW, assignedTo = user2.id, completedAt = LocalDateTime.now().minusHours(73))
         )
 
         scheduler.autoApproveExpiredTasks()
@@ -144,7 +144,7 @@ class TaskSchedulerServiceTest {
 
         val task = taskRepository.save(
             Task.create("Tarea", null, Effort.MEDIUM, null, house.id!!, 1L)
-                .copy(status = TaskStatus.PENDING_REVIEW, assignedTo = user.id, completedAt = LocalDateTime.now().minusHours(25))
+                .copy(status = TaskStatus.PENDING_REVIEW, assignedTo = user.id, completedAt = LocalDateTime.now().minusHours(73))
         )
 
         scheduler.autoApproveExpiredTasks()

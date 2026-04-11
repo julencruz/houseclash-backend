@@ -21,9 +21,6 @@ class AutoApproveExpiredTasksUsecase(
 
             userRepository.findByHouseId(houseId)
                 .filter { it.id != task.assignedTo }
-                .forEach { validator ->
-                    userRepository.save(validator.penalizeKudos())
-                }
         }
     }
 }

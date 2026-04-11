@@ -16,7 +16,7 @@ class AutoApproveExpiredTasksUsecaseTest {
     private val usecase = AutoApproveExpiredTasksUsecase(taskRepository, userRepository)
 
     @Test
-    fun `should auto approve expired tasks, reward worker, and penalize validators`() {
+    fun `should auto approve expired tasks and reward worker without penalizing validators`() {
         val worker = TestDataFactory.createUser(userRepository, "Worker", "w@test.com")
         val validator = TestDataFactory.createUser(userRepository, "Validator", "v@test.com")
 
@@ -29,7 +29,7 @@ class AutoApproveExpiredTasksUsecaseTest {
             task.copy(
                 status = TaskStatus.PENDING_REVIEW,
                 assignedTo = updatedWorker.id,
-                completedAt = LocalDateTime.now().minusHours(25)
+                completedAt = LocalDateTime.now().minusHours(73)
             )
         )
 
@@ -40,8 +40,8 @@ class AutoApproveExpiredTasksUsecaseTest {
         val finalTask = taskRepository.findById(expiredTask.id!!)!!
 
         assertEquals(TaskStatus.AUTO_APPROVED, finalTask.status)
-        assertEquals(4, finalWorker.kudosBalance)
-        assertEquals(3, finalValidator.kudosBalance)
+        assertEquals(task.kudosValue, finalWorker.kudosBalance)
+        assertEquals(5, finalValidator.kudosBalance)
     }
 
     @Test

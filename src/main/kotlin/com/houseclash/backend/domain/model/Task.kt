@@ -105,7 +105,7 @@ data class Task(
     }
 
     fun validationDeadline(): LocalDateTime? {
-        return completedAt?.plusHours(24)
+        return completedAt?.plusHours(72)
     }
 
     fun isValidationExpired(): Boolean {

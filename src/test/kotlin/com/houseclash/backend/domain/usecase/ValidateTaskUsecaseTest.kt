@@ -20,7 +20,7 @@ class ValidateTaskUsecaseTest {
 
     private val task = TestDataFactory.createTask(taskRepository, house.id!!)
 
-    private fun prepareCompletedTask(): Unit {
+    private fun prepareCompletedTask() {
         assignUsecase.execute(task.id!!, updatedUser.id!!)
         completeUsecase.execute(task.id)
     }
@@ -35,6 +35,28 @@ class ValidateTaskUsecaseTest {
         val updatedAssignee = userRepository.findById(updatedUser.id!!)!!
         assertEquals(TaskStatus.APPROVED, taskRepository.findById(task.id)!!.status)
         assertEquals(kudosBefore + task.kudosValue, updatedAssignee.kudosBalance)
+    }
+
+    @Test
+    fun `should give 1 kudo incentive to validator on approve`() {
+        prepareCompletedTask()
+        val validatorKudosBefore = validator.kudosBalance
+
+        usecase.execute(task.id!!, validator.id!!, ValidationDecision.APPROVE)
+
+        val updatedValidator = userRepository.findById(validator.id)!!
+        assertEquals(validatorKudosBefore + ValidateTaskUsecase.INCENTIVE, updatedValidator.kudosBalance)
+    }
+
+    @Test
+    fun `should not give kudo incentive to validator on dispute`() {
+        prepareCompletedTask()
+        val validatorKudosBefore = validator.kudosBalance
+
+        usecase.execute(task.id!!, validator.id!!, ValidationDecision.DISPUTE)
+
+        val updatedValidator = userRepository.findById(validator.id)!!
+        assertEquals(validatorKudosBefore, updatedValidator.kudosBalance)
     }
 
     @Test
