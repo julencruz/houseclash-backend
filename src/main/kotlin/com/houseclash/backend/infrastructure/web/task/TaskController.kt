@@ -122,11 +122,13 @@ class TaskController(
     @Operation(summary = "Marcar tasca com a completada", description = "L'usuari assignat marca la tasca com a completada. Queda pendent de validació per part d'un altre membre")
     @PostMapping("/{taskId}/complete")
     fun complete(
-        @PathVariable taskId: Long
+        @PathVariable taskId: Long,
+        authentication: Authentication
     ): ResponseEntity<TaskResponse> {
-        logger.info("Completing task {}", taskId)
-        val task = completeTaskUsecase.execute(taskId)
-        logger.info("Task {} marked as completed", taskId)
+        val userId = authentication.principal as Long
+        logger.info("User {} completing task {}", userId, taskId)
+        val task = completeTaskUsecase.execute(taskId, userId)
+        logger.info("Task {} marked as completed by user {}", taskId, userId)
         return ResponseEntity.ok(task.toResponse())
     }
 

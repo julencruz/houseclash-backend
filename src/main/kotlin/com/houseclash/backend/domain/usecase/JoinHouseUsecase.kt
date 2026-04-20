@@ -1,12 +1,16 @@
 package com.houseclash.backend.domain.usecase
 
+import com.houseclash.backend.domain.model.ActivityLog
+import com.houseclash.backend.domain.model.ActivityLogType
 import com.houseclash.backend.domain.model.User
+import com.houseclash.backend.domain.port.ActivityLogRepository
 import com.houseclash.backend.domain.port.HouseRepository
 import com.houseclash.backend.domain.port.UserRepository
 
 class JoinHouseUsecase(
     private val userRepository: UserRepository,
     private val houseRepository: HouseRepository,
+    private val activityLogRepository: ActivityLogRepository,
 ) {
     companion object {
         const val WELCOME_BONUS_KUDOS = 50
@@ -27,6 +31,15 @@ class JoinHouseUsecase(
             updatedUser = updatedUser.addKudos(WELCOME_BONUS_KUDOS)
         }
 
-        return userRepository.save(updatedUser)
+        val savedUser = userRepository.save(updatedUser)
+
+        activityLogRepository.save(ActivityLog(
+            houseId = house.id,
+            type = ActivityLogType.MEMBER_JOINED,
+            actorUserId = userId,
+            actorUsername = user.username
+        ))
+
+        return savedUser
     }
 }

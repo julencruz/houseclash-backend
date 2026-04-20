@@ -9,8 +9,9 @@ class CompleteTaskUsecaseTest {
     private val userRepository = UserRepositoryTester()
     private val houseRepository = HouseRepositoryTester()
     private val taskRepository = TaskRepositoryTester()
-    private val assignUsecase = AssignTaskUsecase(userRepository, taskRepository)
-    private val usecase = CompleteTaskUsecase(taskRepository)
+    private val activityLogRepository = ActivityLogRepositoryTester()
+    private val assignUsecase = AssignTaskUsecase(userRepository, taskRepository, activityLogRepository)
+    private val usecase = CompleteTaskUsecase(taskRepository, userRepository, activityLogRepository)
 
     private val user = TestDataFactory.createUser(userRepository)
     private val house = TestDataFactory.createHouse(houseRepository, userRepository, user)
@@ -20,7 +21,7 @@ class CompleteTaskUsecaseTest {
     @Test
     fun `should complete task successfully`() {
         assignUsecase.execute(task.id!!, updatedUser.id!!)
-        val completed = usecase.execute(task.id)
+        val completed = usecase.execute(task.id, updatedUser.id)
         assertEquals(TaskStatus.PENDING_REVIEW, completed.status)
         assertNotNull(completed.completedAt)
     }
@@ -28,14 +29,14 @@ class CompleteTaskUsecaseTest {
     @Test
     fun `should throw when task not found`() {
         assertThrows(IllegalArgumentException::class.java) {
-            usecase.execute(999L)
+            usecase.execute(999L, updatedUser.id!!)
         }
     }
 
     @Test
     fun `should throw when task is not assigned`() {
         assertThrows(IllegalArgumentException::class.java) {
-            usecase.execute(task.id!!)
+            usecase.execute(task.id!!, updatedUser.id!!)
         }
     }
 
@@ -44,7 +45,7 @@ class CompleteTaskUsecaseTest {
         val disputedTask = taskRepository.save(
             task.copy(status = TaskStatus.DISPUTED, assignedTo = updatedUser.id)
         )
-        val result = usecase.execute(disputedTask.id!!)
+        val result = usecase.execute(disputedTask.id!!, updatedUser.id!!)
         assertEquals(TaskStatus.PENDING_REVIEW, result.status)
         assertNotNull(result.completedAt)
     }
@@ -55,7 +56,7 @@ class CompleteTaskUsecaseTest {
             task.copy(status = TaskStatus.APPROVED, assignedTo = updatedUser.id)
         )
         assertThrows(IllegalArgumentException::class.java) {
-            usecase.execute(approvedTask.id!!)
+            usecase.execute(approvedTask.id!!, updatedUser.id!!)
         }
     }
 }

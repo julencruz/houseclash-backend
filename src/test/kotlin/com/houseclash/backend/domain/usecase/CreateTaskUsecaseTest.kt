@@ -16,8 +16,9 @@ class CreateTaskUsecaseTest {
     private val categoryRepository = CategoryRepositoryTester()
     private val registerUsecase = RegisterUserUsecase(userRepository, PasswordEncoderTester())
     private val taskRepository = TaskRepositoryTester()
+    private val activityLogRepository = com.houseclash.backend.helper.ActivityLogRepositoryTester()
     private val createHouseUsecase = CreateHouseUsecase(userRepository, houseRepository)
-    private val usecase = CreateTaskUsecase(taskRepository, houseRepository, categoryRepository, userRepository)
+    private val usecase = CreateTaskUsecase(taskRepository, houseRepository, categoryRepository, userRepository, activityLogRepository)
 
     @Test
     fun `sould create task succesfully`() {

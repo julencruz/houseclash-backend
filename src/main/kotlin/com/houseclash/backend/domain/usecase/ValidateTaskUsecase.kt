@@ -1,6 +1,9 @@
 package com.houseclash.backend.domain.usecase
 
+import com.houseclash.backend.domain.model.ActivityLog
+import com.houseclash.backend.domain.model.ActivityLogType
 import com.houseclash.backend.domain.model.Task
+import com.houseclash.backend.domain.port.ActivityLogRepository
 import com.houseclash.backend.domain.port.TaskRepository
 import com.houseclash.backend.domain.port.UserRepository
 
@@ -12,6 +15,7 @@ enum class ValidationDecision {
 class ValidateTaskUsecase (
     private val taskRepository: TaskRepository,
     private val userRepository : UserRepository,
+    private val activityLogRepository: ActivityLogRepository,
 ) {
     companion object {
         const val INCENTIVE = 1
@@ -30,13 +34,38 @@ class ValidateTaskUsecase (
                 if (!task.isCompletedAfterDeadline()) {
                     userRepository.save(assignedUser.addKudos(task.kudosValue))
                 }
-                val validatedTask = task.approveTask()
+                val validatedTask = taskRepository.save(task.approveTask())
                 userRepository.save(validator.addKudos(INCENTIVE))
-                return taskRepository.save(validatedTask)
+
+                activityLogRepository.save(ActivityLog(
+                    houseId = task.houseId,
+                    type = ActivityLogType.TASK_APPROVED,
+                    actorUserId = validatorId,
+                    actorUsername = validator.username,
+                    targetUserId = task.assignedTo,
+                    targetUsername = assignedUser.username,
+                    taskId = task.id,
+                    taskTitle = task.title
+                ))
+
+                return validatedTask
             }
             ValidationDecision.DISPUTE -> {
-                val validatedTask = task.disputeTask()
-                return taskRepository.save(validatedTask)
+                val assignedUser = userRepository.findById(task.assignedTo)!!
+                val validatedTask = taskRepository.save(task.disputeTask())
+
+                activityLogRepository.save(ActivityLog(
+                    houseId = task.houseId,
+                    type = ActivityLogType.TASK_DISPUTED,
+                    actorUserId = validatorId,
+                    actorUsername = validator.username,
+                    targetUserId = task.assignedTo,
+                    targetUsername = assignedUser.username,
+                    taskId = task.id,
+                    taskTitle = task.title
+                ))
+
+                return validatedTask
             }
         }
     }

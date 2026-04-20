@@ -41,8 +41,9 @@ class DeadlineTaskSchedulerUsecaseTest {
 
     @Test
     fun `should give 0 kudos when approving task completed after deadline`() {
-        val assignUsecase = AssignTaskUsecase(userRepository, taskRepository)
-        val validateUsecase = ValidateTaskUsecase(taskRepository, userRepository)
+        val activityLogRepository = com.houseclash.backend.helper.ActivityLogRepositoryTester()
+        val assignUsecase = AssignTaskUsecase(userRepository, taskRepository, activityLogRepository)
+        val validateUsecase = ValidateTaskUsecase(taskRepository, userRepository, activityLogRepository)
         val validator = TestDataFactory.createUser(userRepository, "Validator", "v@test.com")
         val updatedUser = userRepository.findById(user.id!!)!!
         val kudosBefore = updatedUser.kudosBalance
@@ -68,8 +69,9 @@ class DeadlineTaskSchedulerUsecaseTest {
 
     @Test
     fun `should give normal kudos when approving task completed before deadline`() {
-        val assignUsecase = AssignTaskUsecase(userRepository, taskRepository)
-        val validateUsecase = ValidateTaskUsecase(taskRepository, userRepository)
+        val activityLogRepository = com.houseclash.backend.helper.ActivityLogRepositoryTester()
+        val assignUsecase = AssignTaskUsecase(userRepository, taskRepository, activityLogRepository)
+        val validateUsecase = ValidateTaskUsecase(taskRepository, userRepository, activityLogRepository)
         val validator = TestDataFactory.createUser(userRepository, "Validator", "v@test.com")
         val updatedUser = userRepository.findById(user.id!!)!!
         val kudosBefore = updatedUser.kudosBalance

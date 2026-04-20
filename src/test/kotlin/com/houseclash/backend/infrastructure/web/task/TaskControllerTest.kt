@@ -20,18 +20,19 @@ class TaskControllerTest {
     private val taskRepository = TaskRepositoryTester()
     private val categoryRepository = CategoryRepositoryTester()
     private val passwordEncoder = PasswordEncoderTester()
+    private val activityLogRepository = ActivityLogRepositoryTester()
 
     private val registerUserUsecase = RegisterUserUsecase(userRepository, passwordEncoder)
     private val createHouseUsecase = CreateHouseUsecase(userRepository, houseRepository)
-    private val joinHouseUsecase = JoinHouseUsecase(userRepository, houseRepository)
+    private val joinHouseUsecase = JoinHouseUsecase(userRepository, houseRepository, activityLogRepository)
     private val getActiveTasksUsecase = GetActiveTasksUsecase(userRepository, taskRepository)
-    private val createTaskUsecase = CreateTaskUsecase(taskRepository, houseRepository, categoryRepository, userRepository)
+    private val createTaskUsecase = CreateTaskUsecase(taskRepository, houseRepository, categoryRepository, userRepository, activityLogRepository)
     private val updateTaskUsecase = UpdateTaskUsecase(taskRepository, userRepository, categoryRepository)
     private val deleteTaskUsecase = DeleteTaskUsecase(taskRepository, houseRepository)
-    private val assignTaskUsecase = AssignTaskUsecase(userRepository, taskRepository)
-    private val unassignTaskUsecase = UnassignTaskUsecase(taskRepository, userRepository)
-    private val completeTaskUsecase = CompleteTaskUsecase(taskRepository)
-    private val validateTaskUsecase = ValidateTaskUsecase(taskRepository, userRepository)
+    private val assignTaskUsecase = AssignTaskUsecase(userRepository, taskRepository, activityLogRepository)
+    private val unassignTaskUsecase = UnassignTaskUsecase(taskRepository, userRepository, activityLogRepository)
+    private val completeTaskUsecase = CompleteTaskUsecase(taskRepository, userRepository, activityLogRepository)
+    private val validateTaskUsecase = ValidateTaskUsecase(taskRepository, userRepository, activityLogRepository)
 
     private val controller = TaskController(
         getActiveTasksUsecase,
@@ -56,18 +57,14 @@ class TaskControllerTest {
         member = registerUserUsecase.execute("Member", "member@email.com", "Password1")
         joinHouseUsecase.execute(member.id!!, house.inviteCode)
         category = categoryRepository.save(Category.create(house.id!!, "Cleaning"))
-        // Refresh captain from repository (houseId is updated after createHouseUsecase)
         captain = userRepository.findById(captain.id!!)!!
         member = userRepository.findById(member.id!!)!!
     }
 
-    private fun authAs(user: User) = UsernamePasswordAuthenticationToken(user.id!!, null, emptyList())
-
-    // ---- getActiveTasks ----
 
     @Test
     fun `should return 200 with empty list when house has no tasks`() {
-        val response = controller.getActiveTasks(authAs(captain))
+        val response = controller.getActiveTasks(UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList()))
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertTrue(response.body!!.isEmpty())
@@ -78,7 +75,7 @@ class TaskControllerTest {
         createTaskUsecase.execute(captain.id!!, "Sweep floor", null, Effort.LOW, null, null, house.id!!, category.id!!)
         createTaskUsecase.execute(captain.id!!, "Mop floor", null, Effort.MEDIUM, null, null, house.id!!, category.id!!)
 
-        val response = controller.getActiveTasks(authAs(captain))
+        val response = controller.getActiveTasks(UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList()))
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(2, response.body?.size)
@@ -89,7 +86,7 @@ class TaskControllerTest {
         val outsider = registerUserUsecase.execute("Outsider", "outsider@email.com", "Password1")
 
         assertThrows(IllegalArgumentException::class.java) {
-            controller.getActiveTasks(authAs(outsider))
+            controller.getActiveTasks(UsernamePasswordAuthenticationToken(outsider.id!!, null, emptyList()))
         }
     }
 
@@ -104,7 +101,7 @@ class TaskControllerTest {
             categoryId = category.id!!
         )
 
-        val response = controller.create(request, authAs(captain))
+        val response = controller.create(request, UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList()))
 
         assertEquals(HttpStatus.CREATED, response.statusCode)
         assertEquals("Clean kitchen", response.body?.title)
@@ -116,7 +113,7 @@ class TaskControllerTest {
     fun `should return 201 with correct kudos value based on effort`() {
         val response = controller.create(
             CreateTaskRequest(title = "Task", effort = Effort.HIGH, houseId = house.id!!, categoryId = category.id!!),
-            authAs(captain)
+            UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList())
         )
 
         assertEquals(HttpStatus.CREATED, response.statusCode)
@@ -128,7 +125,7 @@ class TaskControllerTest {
         assertThrows(IllegalArgumentException::class.java) {
             controller.create(
                 CreateTaskRequest(title = "Task", effort = Effort.LOW, houseId = house.id!!, categoryId = 999L),
-                authAs(captain)
+                UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList())
             )
         }
     }
@@ -138,7 +135,7 @@ class TaskControllerTest {
         assertThrows(IllegalArgumentException::class.java) {
             controller.create(
                 CreateTaskRequest(title = "", effort = Effort.LOW, houseId = house.id!!, categoryId = category.id!!),
-                authAs(captain)
+                UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList())
             )
         }
     }
@@ -149,7 +146,7 @@ class TaskControllerTest {
     fun `should return 200 with updated task title`() {
         val task = createTaskUsecase.execute(captain.id!!, "Old Title", null, Effort.LOW, null, null, house.id!!, category.id!!)
 
-        val response = controller.update(task.id!!, UpdateTaskRequest(title = "New Title"), authAs(captain))
+        val response = controller.update(task.id!!, UpdateTaskRequest(title = "New Title"), UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList()))
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals("New Title", response.body?.title)
@@ -159,7 +156,7 @@ class TaskControllerTest {
     fun `should return 200 with updated effort and kudos value`() {
         val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
 
-        val response = controller.update(task.id!!, UpdateTaskRequest(effort = Effort.HIGH), authAs(captain))
+        val response = controller.update(task.id!!, UpdateTaskRequest(effort = Effort.HIGH), UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList()))
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(Effort.HIGH, response.body?.effort)
@@ -168,7 +165,7 @@ class TaskControllerTest {
     @Test
     fun `should throw when updating a non-existent task`() {
         assertThrows(IllegalArgumentException::class.java) {
-            controller.update(999L, UpdateTaskRequest(title = "X"), authAs(captain))
+            controller.update(999L, UpdateTaskRequest(title = "X"), UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList()))
         }
     }
 
@@ -178,7 +175,7 @@ class TaskControllerTest {
     fun `should return 204 when captain deletes an OPEN task`() {
         val task = createTaskUsecase.execute(captain.id!!, "Task to delete", null, Effort.LOW, null, null, house.id!!, category.id!!)
 
-        val response = controller.delete(task.id!!, authAs(captain))
+        val response = controller.delete(task.id!!, UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList()))
 
         assertEquals(HttpStatus.NO_CONTENT, response.statusCode)
     }
@@ -188,14 +185,14 @@ class TaskControllerTest {
         val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
 
         assertThrows(IllegalArgumentException::class.java) {
-            controller.delete(task.id!!, authAs(member))
+            controller.delete(task.id!!, UsernamePasswordAuthenticationToken(member.id!!, null, emptyList()))
         }
     }
 
     @Test
     fun `should throw when deleting a non-existent task`() {
         assertThrows(IllegalArgumentException::class.java) {
-            controller.delete(999L, authAs(captain))
+            controller.delete(999L, UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList()))
         }
     }
 
@@ -205,7 +202,7 @@ class TaskControllerTest {
     fun `should return 200 with task in ASSIGNED status`() {
         val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
 
-        val response = controller.assign(task.id!!, authAs(member))
+        val response = controller.assign(task.id!!, UsernamePasswordAuthenticationToken(member.id!!, null, emptyList()))
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(TaskStatus.ASSIGNED, response.body?.status)
@@ -218,7 +215,7 @@ class TaskControllerTest {
         assignTaskUsecase.execute(task.id!!, captain.id!!)
 
         assertThrows(IllegalArgumentException::class.java) {
-            controller.assign(task.id, authAs(member))
+            controller.assign(task.id, UsernamePasswordAuthenticationToken(member.id!!, null, emptyList()))
         }
     }
 
@@ -229,7 +226,7 @@ class TaskControllerTest {
         val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
         assignTaskUsecase.execute(task.id!!, member.id!!)
 
-        val response = controller.unassign(task.id, authAs(member))
+        val response = controller.unassign(task.id, UsernamePasswordAuthenticationToken(member.id!!, null, emptyList()))
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(TaskStatus.OPEN, response.body?.status)
@@ -242,7 +239,7 @@ class TaskControllerTest {
         assignTaskUsecase.execute(task.id!!, member.id!!)
 
         assertThrows(IllegalArgumentException::class.java) {
-            controller.unassign(task.id, authAs(captain))
+            controller.unassign(task.id, UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList()))
         }
     }
 
@@ -253,7 +250,7 @@ class TaskControllerTest {
         val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
         assignTaskUsecase.execute(task.id!!, member.id!!)
 
-        val response = controller.complete(task.id)
+        val response = controller.complete(task.id, UsernamePasswordAuthenticationToken(member.id!!, null, emptyList()))
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(TaskStatus.PENDING_REVIEW, response.body?.status)
@@ -265,7 +262,7 @@ class TaskControllerTest {
         val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
 
         assertThrows(IllegalArgumentException::class.java) {
-            controller.complete(task.id!!)
+            controller.complete(task.id!!, UsernamePasswordAuthenticationToken(member.id!!, null, emptyList()))
         }
     }
 
@@ -275,9 +272,9 @@ class TaskControllerTest {
     fun `should return 200 with APPROVED status on APPROVE decision`() {
         val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
         assignTaskUsecase.execute(task.id!!, member.id!!)
-        completeTaskUsecase.execute(task.id)
+        completeTaskUsecase.execute(task.id, member.id!!)
 
-        val response = controller.validate(task.id, ValidateTaskRequest("APPROVE"), authAs(captain))
+        val response = controller.validate(task.id, ValidateTaskRequest("APPROVE"), UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList()))
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(TaskStatus.APPROVED, response.body?.status)
@@ -287,9 +284,9 @@ class TaskControllerTest {
     fun `should return 200 with DISPUTED status on DISPUTE decision`() {
         val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
         assignTaskUsecase.execute(task.id!!, member.id!!)
-        completeTaskUsecase.execute(task.id)
+        completeTaskUsecase.execute(task.id, member.id!!)
 
-        val response = controller.validate(task.id, ValidateTaskRequest("DISPUTE"), authAs(captain))
+        val response = controller.validate(task.id, ValidateTaskRequest("DISPUTE"), UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList()))
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(TaskStatus.DISPUTED, response.body?.status)
@@ -299,10 +296,10 @@ class TaskControllerTest {
     fun `should throw when user validates their own task`() {
         val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
         assignTaskUsecase.execute(task.id!!, member.id!!)
-        completeTaskUsecase.execute(task.id)
+        completeTaskUsecase.execute(task.id, member.id!!)
 
         assertThrows(IllegalArgumentException::class.java) {
-            controller.validate(task.id, ValidateTaskRequest("APPROVE"), authAs(member))
+            controller.validate(task.id, ValidateTaskRequest("APPROVE"), UsernamePasswordAuthenticationToken(member.id!!, null, emptyList()))
         }
     }
 
@@ -312,7 +309,7 @@ class TaskControllerTest {
         assignTaskUsecase.execute(task.id!!, member.id!!)
 
         assertThrows(IllegalArgumentException::class.java) {
-            controller.validate(task.id, ValidateTaskRequest("APPROVE"), authAs(captain))
+            controller.validate(task.id, ValidateTaskRequest("APPROVE"), UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList()))
         }
     }
 }

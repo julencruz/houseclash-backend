@@ -10,8 +10,9 @@ class KickMemberUsecaseTest {
     private val houseRepository = HouseRepositoryTester()
     private val taskRepository = TaskRepositoryTester()
     private val cardRepository = CardRepositoryTester()
+    private val activityLogRepository = ActivityLogRepositoryTester()
 
-    private val usecase = KickMemberUsecase(userRepository, houseRepository, taskRepository, cardRepository)
+    private val usecase = KickMemberUsecase(userRepository, houseRepository, taskRepository, cardRepository, activityLogRepository)
 
     @Test
     fun `should successfully kick member, free tasks and burn cards`() {

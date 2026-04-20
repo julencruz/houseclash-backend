@@ -9,9 +9,10 @@ import org.junit.jupiter.api.Assertions.*
 class JoinHouseUsecaseTest {
     private val userRepository = UserRepositoryTester()
     private val houseRepository = HouseRepositoryTester()
+    private val activityLogRepository = com.houseclash.backend.helper.ActivityLogRepositoryTester()
     private val registerUsecase = RegisterUserUsecase(userRepository, PasswordEncoderTester())
     private val createHouseUsecase = CreateHouseUsecase(userRepository, houseRepository)
-    private val usecase = JoinHouseUsecase(userRepository, houseRepository)
+    private val usecase = JoinHouseUsecase(userRepository, houseRepository, activityLogRepository)
 
     @Test
     fun `should join house correctly`() {

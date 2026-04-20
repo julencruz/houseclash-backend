@@ -13,7 +13,8 @@ class AutoApproveExpiredTasksUsecaseTest {
     private val userRepository = UserRepositoryTester()
     private val houseRepository = HouseRepositoryTester()
     private val taskRepository = TaskRepositoryTester()
-    private val usecase = AutoApproveExpiredTasksUsecase(taskRepository, userRepository)
+    private val activityLogRepository = com.houseclash.backend.helper.ActivityLogRepositoryTester()
+    private val usecase = AutoApproveExpiredTasksUsecase(taskRepository, userRepository, activityLogRepository)
 
     @Test
     fun `should auto approve expired tasks and reward worker without penalizing validators`() {

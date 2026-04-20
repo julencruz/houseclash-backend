@@ -13,8 +13,9 @@ class ApplyMarketInflationUsecaseTest {
     private val userRepository = UserRepositoryTester()
     private val houseRepository = HouseRepositoryTester()
     private val taskRepository = TaskRepositoryTester()
+    private val activityLogRepository = com.houseclash.backend.helper.ActivityLogRepositoryTester()
 
-    private val usecase = ApplyMarketInflationUsecase(taskRepository)
+    private val usecase = ApplyMarketInflationUsecase(taskRepository, activityLogRepository)
 
     @Test
     fun `should increase kudos of all open tasks in the specific house`() {

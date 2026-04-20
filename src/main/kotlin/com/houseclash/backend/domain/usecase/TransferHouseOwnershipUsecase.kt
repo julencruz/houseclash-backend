@@ -1,12 +1,16 @@
 package com.houseclash.backend.domain.usecase
 
+import com.houseclash.backend.domain.model.ActivityLog
+import com.houseclash.backend.domain.model.ActivityLogType
 import com.houseclash.backend.domain.model.House
+import com.houseclash.backend.domain.port.ActivityLogRepository
 import com.houseclash.backend.domain.port.HouseRepository
 import com.houseclash.backend.domain.port.UserRepository
 
 class TransferHouseOwnershipUsecase (
     private val houseRepository: HouseRepository,
     private val userRepository: UserRepository,
+    private val activityLogRepository: ActivityLogRepository,
 ) {
     fun execute(currentOwnerId: Long, newOwnerId: Long): House {
         val currentOwner = userRepository.findById(currentOwnerId)
@@ -23,6 +27,17 @@ class TransferHouseOwnershipUsecase (
         requireNotNull(newOwner) { "New owner does not exist." }
         require(newOwner.houseId == houseId) { "The new captain must belong to the same house." }
 
-        return houseRepository.save(house.transferOwnership(newOwnerId))
+        val updatedHouse = houseRepository.save(house.transferOwnership(newOwnerId))
+
+        activityLogRepository.save(ActivityLog(
+            houseId = houseId,
+            type = ActivityLogType.CAPTAIN_TRANSFERRED,
+            actorUserId = currentOwnerId,
+            actorUsername = currentOwner.username,
+            targetUserId = newOwnerId,
+            targetUsername = newOwner.username
+        ))
+
+        return updatedHouse
     }
 }

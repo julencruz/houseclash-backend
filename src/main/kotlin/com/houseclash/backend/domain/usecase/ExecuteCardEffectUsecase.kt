@@ -1,7 +1,10 @@
 package com.houseclash.backend.domain.usecase
 
+import com.houseclash.backend.domain.model.ActivityLog
+import com.houseclash.backend.domain.model.ActivityLogType
 import com.houseclash.backend.domain.model.cardlogic.CardEffectContext
 import com.houseclash.backend.domain.model.cardlogic.CardEffectResult
+import com.houseclash.backend.domain.port.ActivityLogRepository
 import com.houseclash.backend.domain.port.CardRepository
 import com.houseclash.backend.domain.port.TaskRepository
 import com.houseclash.backend.domain.port.UserRepository
@@ -11,6 +14,7 @@ class ExecuteCardEffectUsecase(
     private val cardRepository: CardRepository,
     private val userRepository: UserRepository,
     private val taskRepository: TaskRepository,
+    private val activityLogRepository: ActivityLogRepository,
 ) {
     fun execute(
         cardId: Long,
@@ -47,6 +51,18 @@ class ExecuteCardEffectUsecase(
         result.updatedUsers.forEach { userRepository.save(it) }
         result.updatedTasks.forEach { taskRepository.save(it) }
         cardRepository.delete(cardId)
+
+        activityLogRepository.save(ActivityLog(
+            houseId = executingUser.houseId,
+            type = ActivityLogType.CARD_USED,
+            actorUserId = executingUserId,
+            actorUsername = executingUser.username,
+            targetUserId = targetUser?.id,
+            targetUsername = targetUser?.username,
+            taskId = targetTask?.id,
+            taskTitle = targetTask?.title,
+            cardType = card.type.name
+        ))
 
         return result
     }

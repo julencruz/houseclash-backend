@@ -12,7 +12,8 @@ class UnassignTaskUsecaseTest {
     private val userRepository = UserRepositoryTester()
     private val houseRepository = HouseRepositoryTester()
     private val taskRepository = TaskRepositoryTester()
-    private val usecase = UnassignTaskUsecase(taskRepository, userRepository)
+    private val activityLogRepository = com.houseclash.backend.helper.ActivityLogRepositoryTester()
+    private val usecase = UnassignTaskUsecase(taskRepository, userRepository, activityLogRepository)
 
     @Test
     fun `should unassign task and penalize user by 3 kudos`() {

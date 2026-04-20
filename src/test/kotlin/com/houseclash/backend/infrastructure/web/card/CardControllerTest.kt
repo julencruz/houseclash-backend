@@ -18,13 +18,14 @@ class CardControllerTest {
     private val cardRepository = CardRepositoryTester()
     private val taskRepository = TaskRepositoryTester()
     private val passwordEncoder = PasswordEncoderTester()
+    private val activityLogRepository = ActivityLogRepositoryTester()
 
     private val registerUserUsecase = RegisterUserUsecase(userRepository, passwordEncoder)
     private val createHouseUsecase = CreateHouseUsecase(userRepository, houseRepository)
-    private val joinHouseUsecase = JoinHouseUsecase(userRepository, houseRepository)
+    private val joinHouseUsecase = JoinHouseUsecase(userRepository, houseRepository, activityLogRepository)
     private val getUserCardsUsecase = GetUserCardsUsecase(userRepository, cardRepository)
     private val openCardPackUsecase = OpenCardPackUsecase(userRepository, cardRepository)
-    private val executeCardEffectUsecase = ExecuteCardEffectUsecase(cardRepository, userRepository, taskRepository)
+    private val executeCardEffectUsecase = ExecuteCardEffectUsecase(cardRepository, userRepository, taskRepository, activityLogRepository)
 
     private val controller = CardController(
         getUserCardsUsecase,

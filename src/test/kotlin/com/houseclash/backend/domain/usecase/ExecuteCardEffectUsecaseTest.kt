@@ -12,7 +12,8 @@ class ExecuteCardEffectUsecaseTest {
     private val taskRepository = TaskRepositoryTester()
     private val cardRepository = CardRepositoryTester()
     private val categoryRepository = CategoryRepositoryTester()
-    private val usecase = ExecuteCardEffectUsecase(cardRepository, userRepository, taskRepository)
+    private val activityLogRepository = ActivityLogRepositoryTester()
+    private val usecase = ExecuteCardEffectUsecase(cardRepository, userRepository, taskRepository, activityLogRepository)
 
     private val executor = TestDataFactory.createUser(userRepository, "Executor", "executor@email.com", kudosBalance = 50)
     private val target = TestDataFactory.createUser(userRepository, "Target", "target@email.com", kudosBalance = 20)

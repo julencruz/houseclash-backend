@@ -6,11 +6,13 @@ import com.houseclash.backend.domain.model.Task
 import com.houseclash.backend.domain.model.TaskStatus
 import com.houseclash.backend.domain.usecase.ApplyMarketInflationUsecase
 import com.houseclash.backend.domain.usecase.AutoApproveExpiredTasksUsecase
+import com.houseclash.backend.domain.usecase.PurgeActivityLogUsecase
 import com.houseclash.backend.domain.usecase.RecurringTaskSchedulerUsecase
 import com.houseclash.backend.helper.HouseRepositoryTester
 import com.houseclash.backend.helper.TaskRepositoryTester
 import com.houseclash.backend.helper.TestDataFactory
 import com.houseclash.backend.helper.UserRepositoryTester
+import com.houseclash.backend.helper.ActivityLogRepositoryTester
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
@@ -23,15 +25,18 @@ class TaskSchedulerServiceTest {
     private val userRepository = UserRepositoryTester()
     private val houseRepository = HouseRepositoryTester()
     private val taskRepository = TaskRepositoryTester()
+    private val activityLogRepository = ActivityLogRepositoryTester()
 
     private val recurringTaskSchedulerUsecase = RecurringTaskSchedulerUsecase(taskRepository) { FIXED_NOW }
-    private val autoApproveExpiredTasksUsecase = AutoApproveExpiredTasksUsecase(taskRepository, userRepository)
-    private val applyMarketInflationUsecase = ApplyMarketInflationUsecase(taskRepository)
+    private val autoApproveExpiredTasksUsecase = AutoApproveExpiredTasksUsecase(taskRepository, userRepository, activityLogRepository)
+    private val applyMarketInflationUsecase = ApplyMarketInflationUsecase(taskRepository, activityLogRepository)
+    private val purgeActivityLogUsecase = PurgeActivityLogUsecase(activityLogRepository, taskRepository)
 
     private val scheduler = TaskSchedulerService(
         recurringTaskSchedulerUsecase,
         autoApproveExpiredTasksUsecase,
         applyMarketInflationUsecase,
+        purgeActivityLogUsecase,
         houseRepository
     )
 

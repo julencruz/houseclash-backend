@@ -9,9 +9,10 @@ class ValidateTaskUsecaseTest {
     private val userRepository = UserRepositoryTester()
     private val houseRepository = HouseRepositoryTester()
     private val taskRepository = TaskRepositoryTester()
-    private val assignUsecase = AssignTaskUsecase(userRepository, taskRepository)
-    private val completeUsecase = CompleteTaskUsecase(taskRepository)
-    private val usecase = ValidateTaskUsecase(taskRepository, userRepository)
+    private val activityLogRepository = ActivityLogRepositoryTester()
+    private val assignUsecase = AssignTaskUsecase(userRepository, taskRepository, activityLogRepository)
+    private val completeUsecase = CompleteTaskUsecase(taskRepository, userRepository, activityLogRepository)
+    private val usecase = ValidateTaskUsecase(taskRepository, userRepository, activityLogRepository)
 
     private val user = TestDataFactory.createUser(userRepository)
     private val house = TestDataFactory.createHouse(houseRepository, userRepository, user)
@@ -22,7 +23,7 @@ class ValidateTaskUsecaseTest {
 
     private fun prepareCompletedTask() {
         assignUsecase.execute(task.id!!, updatedUser.id!!)
-        completeUsecase.execute(task.id)
+        completeUsecase.execute(task.id, updatedUser.id)
     }
 
     @Test

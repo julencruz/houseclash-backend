@@ -1,7 +1,10 @@
 package com.houseclash.backend.domain.usecase
 
+import com.houseclash.backend.domain.model.ActivityLog
+import com.houseclash.backend.domain.model.ActivityLogType
 import com.houseclash.backend.domain.model.TaskStatus
 import com.houseclash.backend.domain.model.User
+import com.houseclash.backend.domain.port.ActivityLogRepository
 import com.houseclash.backend.domain.port.CardRepository
 import com.houseclash.backend.domain.port.HouseRepository
 import com.houseclash.backend.domain.port.TaskRepository
@@ -11,7 +14,8 @@ class KickMemberUsecase(
     private val userRepository: UserRepository,
     private val houseRepository: HouseRepository,
     private val taskRepository: TaskRepository,
-    private val cardRepository: CardRepository
+    private val cardRepository: CardRepository,
+    private val activityLogRepository: ActivityLogRepository,
 ) {
     fun execute(captainId: Long, kickedUserId: Long): User {
         require(captainId != kickedUserId) { "You cannot kick yourself. Use LeaveHouse or TransferOwnership instead." }
@@ -42,6 +46,17 @@ class KickMemberUsecase(
 
         cardRepository.deleteByUserId(kickedUserId)
 
-        return userRepository.save(kickedUser.leaveHouse(house.id!!))
+        val result = userRepository.save(kickedUser.leaveHouse(house.id!!))
+
+        activityLogRepository.save(ActivityLog(
+            houseId = house.id,
+            type = ActivityLogType.MEMBER_KICKED,
+            actorUserId = captainId,
+            actorUsername = captain.username,
+            targetUserId = kickedUserId,
+            targetUsername = kickedUser.username
+        ))
+
+        return result
     }
 }

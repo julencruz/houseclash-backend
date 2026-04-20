@@ -37,8 +37,11 @@ class BeanConfig {
         GetHouseDetailsUsecase(userRepository, houseRepository)
 
     @Bean
-    fun joinHouseUsecase(userRepository: UserRepository, houseRepository: HouseRepository) =
-        JoinHouseUsecase(userRepository, houseRepository)
+    fun joinHouseUsecase(
+        userRepository: UserRepository,
+        houseRepository: HouseRepository,
+        activityLogRepository: ActivityLogRepository
+    ) = JoinHouseUsecase(userRepository, houseRepository, activityLogRepository)
 
     @Bean
     fun leaveHouseUsecase(
@@ -54,12 +57,16 @@ class BeanConfig {
         userRepository: UserRepository,
         houseRepository: HouseRepository,
         taskRepository: TaskRepository,
-        cardRepository: CardRepository
-    ) = KickMemberUsecase(userRepository, houseRepository, taskRepository, cardRepository)
+        cardRepository: CardRepository,
+        activityLogRepository: ActivityLogRepository
+    ) = KickMemberUsecase(userRepository, houseRepository, taskRepository, cardRepository, activityLogRepository)
 
     @Bean
-    fun transferHouseOwnershipUsecase(houseRepository: HouseRepository, userRepository: UserRepository) =
-        TransferHouseOwnershipUsecase(houseRepository, userRepository)
+    fun transferHouseOwnershipUsecase(
+        houseRepository: HouseRepository,
+        userRepository: UserRepository,
+        activityLogRepository: ActivityLogRepository
+    ) = TransferHouseOwnershipUsecase(houseRepository, userRepository, activityLogRepository)
 
     @Bean
     fun updateHouseUsecase(houseRepository: HouseRepository, userRepository: UserRepository) =
@@ -108,8 +115,9 @@ class BeanConfig {
         taskRepository: TaskRepository,
         houseRepository: HouseRepository,
         categoryRepository: CategoryRepository,
-        userRepository: UserRepository
-    ) = CreateTaskUsecase(taskRepository, houseRepository, categoryRepository, userRepository)
+        userRepository: UserRepository,
+        activityLogRepository: ActivityLogRepository
+    ) = CreateTaskUsecase(taskRepository, houseRepository, categoryRepository, userRepository, activityLogRepository)
 
     @Bean
     fun updateTaskUsecase(
@@ -123,20 +131,32 @@ class BeanConfig {
         DeleteTaskUsecase(taskRepository, houseRepository)
 
     @Bean
-    fun assignTaskUsecase(userRepository: UserRepository, taskRepository: TaskRepository) =
-        AssignTaskUsecase(userRepository, taskRepository)
+    fun assignTaskUsecase(
+        userRepository: UserRepository,
+        taskRepository: TaskRepository,
+        activityLogRepository: ActivityLogRepository
+    ) = AssignTaskUsecase(userRepository, taskRepository, activityLogRepository)
 
     @Bean
-    fun unassignTaskUsecase(taskRepository: TaskRepository, userRepository: UserRepository) =
-        UnassignTaskUsecase(taskRepository, userRepository)
+    fun unassignTaskUsecase(
+        taskRepository: TaskRepository,
+        userRepository: UserRepository,
+        activityLogRepository: ActivityLogRepository
+    ) = UnassignTaskUsecase(taskRepository, userRepository, activityLogRepository)
 
     @Bean
-    fun completeTaskUsecase(taskRepository: TaskRepository) =
-        CompleteTaskUsecase(taskRepository)
+    fun completeTaskUsecase(
+        taskRepository: TaskRepository,
+        userRepository: UserRepository,
+        activityLogRepository: ActivityLogRepository
+    ) = CompleteTaskUsecase(taskRepository, userRepository, activityLogRepository)
 
     @Bean
-    fun validateTaskUsecase(taskRepository: TaskRepository, userRepository: UserRepository) =
-        ValidateTaskUsecase(taskRepository, userRepository)
+    fun validateTaskUsecase(
+        taskRepository: TaskRepository,
+        userRepository: UserRepository,
+        activityLogRepository: ActivityLogRepository
+    ) = ValidateTaskUsecase(taskRepository, userRepository, activityLogRepository)
 
     // ---- Card ----
 
@@ -152,20 +172,40 @@ class BeanConfig {
     fun executeCardEffectUsecase(
         cardRepository: CardRepository,
         userRepository: UserRepository,
-        taskRepository: TaskRepository
-    ) = ExecuteCardEffectUsecase(cardRepository, userRepository, taskRepository)
+        taskRepository: TaskRepository,
+        activityLogRepository: ActivityLogRepository
+    ) = ExecuteCardEffectUsecase(cardRepository, userRepository, taskRepository, activityLogRepository)
 
     // ---- Scheduler ----
 
     @Bean
-    fun applyMarketInflationUsecase(taskRepository: TaskRepository) =
-        ApplyMarketInflationUsecase(taskRepository)
+    fun applyMarketInflationUsecase(
+        taskRepository: TaskRepository,
+        activityLogRepository: ActivityLogRepository
+    ) = ApplyMarketInflationUsecase(taskRepository, activityLogRepository)
 
     @Bean
-    fun autoApproveExpiredTasksUsecase(taskRepository: TaskRepository, userRepository: UserRepository) =
-        AutoApproveExpiredTasksUsecase(taskRepository, userRepository)
+    fun autoApproveExpiredTasksUsecase(
+        taskRepository: TaskRepository,
+        userRepository: UserRepository,
+        activityLogRepository: ActivityLogRepository
+    ) = AutoApproveExpiredTasksUsecase(taskRepository, userRepository, activityLogRepository)
 
     @Bean
     fun recurringTaskSchedulerUsecase(taskRepository: TaskRepository) =
         RecurringTaskSchedulerUsecase(taskRepository)
+
+    // ---- Activity Log ----
+
+    @Bean
+    fun getActivityLogUsecase(
+        activityLogRepository: ActivityLogRepository,
+        taskRepository: TaskRepository
+    ) = GetActivityLogUsecase(activityLogRepository, taskRepository)
+
+    @Bean
+    fun purgeActivityLogUsecase(
+        activityLogRepository: ActivityLogRepository,
+        taskRepository: TaskRepository
+    ) = PurgeActivityLogUsecase(activityLogRepository, taskRepository)
 }

@@ -9,7 +9,8 @@ import org.junit.jupiter.api.Test
 class TransferHouseOwnershipUsecaseTest {
     private val houseRepository = HouseRepositoryTester()
     private val userRepository = UserRepositoryTester()
-    private val usecase = TransferHouseOwnershipUsecase(houseRepository, userRepository)
+    private val activityLogRepository = com.houseclash.backend.helper.ActivityLogRepositoryTester()
+    private val usecase = TransferHouseOwnershipUsecase(houseRepository, userRepository, activityLogRepository)
 
     @Test
     fun `should successfully transfer ownership to another member`() {

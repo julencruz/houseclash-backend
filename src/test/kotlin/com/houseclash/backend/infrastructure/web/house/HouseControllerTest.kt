@@ -16,14 +16,15 @@ class HouseControllerTest {
     private val cardRepository = CardRepositoryTester()
     private val categoryRepository = CategoryRepositoryTester()
     private val passwordEncoder = PasswordEncoderTester()
+    private val activityLogRepository = ActivityLogRepositoryTester()
 
     private val registerUserUsecase = RegisterUserUsecase(userRepository, passwordEncoder)
     private val createHouseUsecase = CreateHouseUsecase(userRepository, houseRepository)
     private val getHouseDetailsUsecase = GetHouseDetailsUsecase(userRepository, houseRepository)
-    private val joinHouseUsecase = JoinHouseUsecase(userRepository, houseRepository)
+    private val joinHouseUsecase = JoinHouseUsecase(userRepository, houseRepository, activityLogRepository)
     private val leaveHouseUsecase = LeaveHouseUsecase(userRepository, taskRepository, cardRepository, houseRepository, categoryRepository)
-    private val kickMemberUsecase = KickMemberUsecase(userRepository, houseRepository, taskRepository, cardRepository)
-    private val transferHouseOwnershipUsecase = TransferHouseOwnershipUsecase(houseRepository, userRepository)
+    private val kickMemberUsecase = KickMemberUsecase(userRepository, houseRepository, taskRepository, cardRepository, activityLogRepository)
+    private val transferHouseOwnershipUsecase = TransferHouseOwnershipUsecase(houseRepository, userRepository, activityLogRepository)
     private val updateHouseUsecase = UpdateHouseUsecase(houseRepository, userRepository)
     private val getHouseRankingUsecase = GetHouseRankingUsecase(userRepository, taskRepository)
 

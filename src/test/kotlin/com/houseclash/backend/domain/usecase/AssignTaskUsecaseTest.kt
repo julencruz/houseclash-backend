@@ -5,6 +5,7 @@ import com.houseclash.backend.helper.HouseRepositoryTester
 import com.houseclash.backend.helper.TaskRepositoryTester
 import com.houseclash.backend.helper.TestDataFactory
 import com.houseclash.backend.helper.UserRepositoryTester
+import com.houseclash.backend.helper.ActivityLogRepositoryTester
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
@@ -12,7 +13,8 @@ class AssignTaskUsecaseTest {
     private val userRepository = UserRepositoryTester()
     private val houseRepository = HouseRepositoryTester()
     private val taskRepository = TaskRepositoryTester()
-    private val usecase = AssignTaskUsecase(userRepository, taskRepository)
+    private val activityLogRepository = ActivityLogRepositoryTester()
+    private val usecase = AssignTaskUsecase(userRepository, taskRepository, activityLogRepository)
 
     private val user = TestDataFactory.createUser(userRepository)
     private val house = TestDataFactory.createHouse(houseRepository, userRepository, user)
