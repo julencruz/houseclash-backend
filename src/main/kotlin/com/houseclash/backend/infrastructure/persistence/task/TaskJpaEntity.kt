@@ -15,6 +15,7 @@ class TaskJpaEntity(
     val id: Long? = null,
 
     @Version
+    @Column(columnDefinition = "bigint default 0")
     val version: Long = 0,
 
     @Column(nullable = false)
