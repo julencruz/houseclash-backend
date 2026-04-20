@@ -49,6 +49,19 @@ class TaskRepositoryAdapter(
         return candidates.filter { it.isDueForReset() }
     }
 
+    override fun findOverdueAssignedRecurringTasks(): List<Task> {
+        val inProgressStatuses = listOf(TaskStatus.ASSIGNED, TaskStatus.PENDING_REVIEW)
+        val candidates = jpaRepository.findRecurringCandidates(inProgressStatuses).map { it.toDomain() }
+        return candidates.filter { it.isOverdueUncompletedCycle() }
+    }
+
+    override fun findTasksOverdueByDeadline(): List<Task> {
+        val inProgressStatuses = listOf(TaskStatus.OPEN, TaskStatus.ASSIGNED, TaskStatus.PENDING_REVIEW)
+        return jpaRepository.findByDeadlineNotNullAndStatusIn(inProgressStatuses)
+            .map { it.toDomain() }
+            .filter { it.isOverdueByDeadline() }
+    }
+
     override fun findByCategoryId(categoryId: Long): List<Task> {
         return jpaRepository.findByCategoryId(categoryId).map { it.toDomain() }
     }

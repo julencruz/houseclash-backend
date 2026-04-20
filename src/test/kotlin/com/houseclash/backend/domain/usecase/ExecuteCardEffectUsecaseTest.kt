@@ -176,68 +176,70 @@ class ExecuteCardEffectUsecaseTest {
         assertEquals(5, lowTaskAfter.kudosValue)
     }
 
-    // --- GRACE_PERIOD ---
+    // --- FAST_TRACK ---
 
     @Test
-    fun `GRACE_PERIOD should reset completedAt of PENDING_REVIEW tasks`() {
-        val pastTime = LocalDateTime.now().minusDays(2)
-        val pendingTask = taskRepository.save(
-            Task.create("Review Task", null, Effort.MEDIUM, null, house.id!!, 1L).copy(
-                status = TaskStatus.PENDING_REVIEW,
-                assignedTo = updatedTarget.id,
-                completedAt = pastTime
-            )
-        )
-        val card = saveCard(CardType.GRACE_PERIOD)
-        usecase.execute(card.id!!, updatedExecutor.id!!)
-
-        val taskAfter = taskRepository.findById(pendingTask.id!!)!!
-        assertEquals(TaskStatus.PENDING_REVIEW, taskAfter.status)
-        assertTrue(taskAfter.completedAt!!.isAfter(pastTime))
-    }
-
-    @Test
-    fun `GRACE_PERIOD should reset all PENDING_REVIEW tasks`() {
-        val pastTime = LocalDateTime.now().minusDays(2)
+    fun `FAST_TRACK should approve all PENDING_REVIEW tasks and give kudos to assignees`() {
+        val pastTime = LocalDateTime.now().minusDays(1)
         val task1 = taskRepository.save(
-            Task.create("Review Task 1", null, Effort.LOW, null, house.id!!, 1L).copy(
+            Task.create("Task 1", null, Effort.LOW, null, null, house.id!!, 1L).copy(
                 status = TaskStatus.PENDING_REVIEW,
                 assignedTo = updatedTarget.id,
                 completedAt = pastTime
             )
         )
         val task2 = taskRepository.save(
-            Task.create("Review Task 2", null, Effort.HIGH, null, house.id, 1L).copy(
+            Task.create("Task 2", null, Effort.MEDIUM, null, null, house.id, 1L).copy(
                 status = TaskStatus.PENDING_REVIEW,
                 assignedTo = updatedExecutor.id,
                 completedAt = pastTime
             )
         )
-        val card = saveCard(CardType.GRACE_PERIOD)
+        val targetKudosBefore = userRepository.findById(updatedTarget.id!!)!!.kudosBalance
+        val card = saveCard(CardType.FAST_TRACK)
         usecase.execute(card.id!!, updatedExecutor.id!!)
 
-        assertTrue(taskRepository.findById(task1.id!!)!!.completedAt!!.isAfter(pastTime))
-        assertTrue(taskRepository.findById(task2.id!!)!!.completedAt!!.isAfter(pastTime))
+        assertEquals(TaskStatus.APPROVED, taskRepository.findById(task1.id!!)!!.status)
+        assertEquals(TaskStatus.APPROVED, taskRepository.findById(task2.id!!)!!.status)
+        assertEquals(targetKudosBefore + task1.kudosValue, userRepository.findById(updatedTarget.id)!!.kudosBalance)
     }
 
     @Test
-    fun `GRACE_PERIOD should throw when no tasks are pending review`() {
-        val card = saveCard(CardType.GRACE_PERIOD)
+    fun `FAST_TRACK should not give kudos when task was completed after deadline`() {
+        val expiredDeadline = LocalDateTime.now().minusDays(2)
+        val task = taskRepository.save(
+            Task.create("Task", null, Effort.HIGH, null, expiredDeadline, house.id!!, 1L).copy(
+                status = TaskStatus.PENDING_REVIEW,
+                assignedTo = updatedTarget.id,
+                completedAt = LocalDateTime.now().minusDays(1)
+            )
+        )
+        val kudosBefore = userRepository.findById(updatedTarget.id!!)!!.kudosBalance
+        val card = saveCard(CardType.FAST_TRACK)
+        usecase.execute(card.id!!, updatedExecutor.id!!)
+
+        assertEquals(TaskStatus.APPROVED, taskRepository.findById(task.id!!)!!.status)
+        assertEquals(kudosBefore, userRepository.findById(updatedTarget.id)!!.kudosBalance)
+    }
+
+    @Test
+    fun `FAST_TRACK should throw when no tasks are pending review`() {
+        val card = saveCard(CardType.FAST_TRACK)
         assertThrows(IllegalArgumentException::class.java) {
             usecase.execute(card.id!!, updatedExecutor.id!!)
         }
     }
 
     @Test
-    fun `GRACE_PERIOD should delete card after use`() {
+    fun `FAST_TRACK should delete card after use`() {
         taskRepository.save(
-            Task.create("Review Task", null, Effort.MEDIUM, null, house.id!!, 1L).copy(
+            Task.create("Task", null, Effort.MEDIUM, null, null, house.id!!, 1L).copy(
                 status = TaskStatus.PENDING_REVIEW,
                 assignedTo = updatedTarget.id,
                 completedAt = LocalDateTime.now().minusDays(1)
             )
         )
-        val card = saveCard(CardType.GRACE_PERIOD)
+        val card = saveCard(CardType.FAST_TRACK)
         usecase.execute(card.id!!, updatedExecutor.id!!)
         assertNull(cardRepository.findById(card.id))
     }

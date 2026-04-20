@@ -7,6 +7,7 @@ import com.houseclash.backend.domain.port.CategoryRepository
 import com.houseclash.backend.domain.port.HouseRepository
 import com.houseclash.backend.domain.port.TaskRepository
 import com.houseclash.backend.domain.port.UserRepository
+import java.time.LocalDateTime
 
 class CreateTaskUsecase (
     private val taskRepository : TaskRepository,
@@ -14,7 +15,7 @@ class CreateTaskUsecase (
     private val categoryRepository: CategoryRepository,
     private val userRepository: UserRepository
 ) {
-    fun execute(userId: Long, title: String, description: String? = null, effort: Effort, recurrence: Recurrence? = null, houseId: Long, categoryId: Long): Task {
+    fun execute(userId: Long, title: String, description: String? = null, effort: Effort, recurrence: Recurrence? = null, deadline: LocalDateTime? = null, houseId: Long, categoryId: Long): Task {
         val user = userRepository.findById(userId)
         require(user != null) { "User not found" }
         require(user.houseId == houseId) { "User does not belong to this house" }
@@ -24,7 +25,7 @@ class CreateTaskUsecase (
         require(category != null) { "Category doesnt exist" }
         require(category.houseId == houseId) { "Category does not belong to house: $houseId" }
 
-        val task = Task.create(title, description, effort, recurrence, houseId, categoryId)
+        val task = Task.create(title, description, effort, recurrence, deadline, houseId, categoryId)
         return taskRepository.save(task)
     }
 }

@@ -6,6 +6,7 @@ import com.houseclash.backend.domain.model.Task
 import com.houseclash.backend.domain.port.CategoryRepository
 import com.houseclash.backend.domain.port.TaskRepository
 import com.houseclash.backend.domain.port.UserRepository
+import java.time.LocalDateTime
 
 class UpdateTaskUsecase(
     private val taskRepository: TaskRepository,
@@ -19,6 +20,8 @@ class UpdateTaskUsecase(
         description: String? = null,
         effort: Effort? = null,
         recurrence: String? = null,
+        deadline: LocalDateTime? = null,
+        clearDeadline: Boolean = false,
         categoryId: Long? = null
     ): Task {
         val user = userRepository.findById(userId)
@@ -49,8 +52,10 @@ class UpdateTaskUsecase(
         val updatedTask = task.update(
             newTitle = title ?: task.title,
             newDescription = description ?: task.description,
-            newEffort = effort ?: task.effort,
+            newEffort = effort,
             newRecurrence = newRecurrence,
+            newDeadline = deadline,
+            clearDeadline = clearDeadline,
             newCategoryId = categoryId ?: task.categoryId
         )
 

@@ -49,6 +49,8 @@ class TaskJpaEntity(
     @Enumerated(EnumType.STRING)
     val recurrence: Recurrence? = null,
 
+    val deadline: LocalDateTime? = null,
+
     @Column(nullable = false, updatable = false)
     val createdAt: LocalDateTime,
 
@@ -68,6 +70,7 @@ fun TaskJpaEntity.toDomain(): Task {
         categoryId = this.categoryId,
         isForced = this.isForced,
         recurrence = this.recurrence,
+        deadline = this.deadline,
         createdAt = this.createdAt,
         completedAt = this.completedAt,
         version = this.version
@@ -87,6 +90,7 @@ fun Task.toEntity(): TaskJpaEntity {
         categoryId = this.categoryId,
         isForced = this.isForced,
         recurrence = this.recurrence,
+        deadline = this.deadline,
         createdAt = this.createdAt,
         completedAt = this.completedAt,
         version = this.version

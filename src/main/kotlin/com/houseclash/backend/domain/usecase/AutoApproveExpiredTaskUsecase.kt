@@ -17,10 +17,9 @@ class AutoApproveExpiredTasksUsecase(
 
             val user = userRepository.findById(task.assignedTo!!)
             require(user != null) {"User doesn't exist"}
-            userRepository.save(user.addKudos(task.kudosValue))
-
-            userRepository.findByHouseId(houseId)
-                .filter { it.id != task.assignedTo }
+            if (!task.isCompletedAfterDeadline()) {
+                userRepository.save(user.addKudos(task.kudosValue))
+            }
         }
     }
 }

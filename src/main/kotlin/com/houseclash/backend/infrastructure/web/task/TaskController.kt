@@ -49,6 +49,7 @@ class TaskController(
             description = request.description,
             effort = request.effort,
             recurrence = request.recurrence?.let { Recurrence.valueOf(it.uppercase()) },
+            deadline = request.deadline,
             houseId = request.houseId,
             categoryId = request.categoryId
         )
@@ -72,6 +73,7 @@ class TaskController(
             description = request.description,
             effort = request.effort,
             recurrence = request.recurrence,
+            deadline = request.deadline,
             categoryId = request.categoryId
         )
         logger.info("Task {} updated by user {}", taskId, userId)

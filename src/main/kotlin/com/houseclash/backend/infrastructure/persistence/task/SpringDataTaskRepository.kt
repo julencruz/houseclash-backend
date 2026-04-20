@@ -14,6 +14,7 @@ interface SpringDataTaskRepository : JpaRepository<TaskJpaEntity, Long> {
     fun findByAssignedTo(userId: Long): List<TaskJpaEntity>
     fun findByCategoryId(categoryId: Long): List<TaskJpaEntity>
     fun deleteByHouseId(houseId: Long)
+    fun findByDeadlineNotNullAndStatusIn(statuses: List<TaskStatus>): List<TaskJpaEntity>
 
     @Query(
         "SELECT t FROM TaskJpaEntity t " +

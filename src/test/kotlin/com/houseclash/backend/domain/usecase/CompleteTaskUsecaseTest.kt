@@ -38,4 +38,24 @@ class CompleteTaskUsecaseTest {
             usecase.execute(task.id!!)
         }
     }
+
+    @Test
+    fun `should resubmit a disputed task back to pending review`() {
+        val disputedTask = taskRepository.save(
+            task.copy(status = TaskStatus.DISPUTED, assignedTo = updatedUser.id)
+        )
+        val result = usecase.execute(disputedTask.id!!)
+        assertEquals(TaskStatus.PENDING_REVIEW, result.status)
+        assertNotNull(result.completedAt)
+    }
+
+    @Test
+    fun `should throw when trying to complete an approved task`() {
+        val approvedTask = taskRepository.save(
+            task.copy(status = TaskStatus.APPROVED, assignedTo = updatedUser.id)
+        )
+        assertThrows(IllegalArgumentException::class.java) {
+            usecase.execute(approvedTask.id!!)
+        }
+    }
 }

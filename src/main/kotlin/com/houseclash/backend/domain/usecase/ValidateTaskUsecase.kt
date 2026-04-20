@@ -27,7 +27,9 @@ class ValidateTaskUsecase (
         when (decision) {
             ValidationDecision.APPROVE -> {
                 val assignedUser = userRepository.findById(task.assignedTo)!!
-                userRepository.save(assignedUser.addKudos(task.kudosValue))
+                if (!task.isCompletedAfterDeadline()) {
+                    userRepository.save(assignedUser.addKudos(task.kudosValue))
+                }
                 val validatedTask = task.approveTask()
                 userRepository.save(validator.addKudos(INCENTIVE))
                 return taskRepository.save(validatedTask)

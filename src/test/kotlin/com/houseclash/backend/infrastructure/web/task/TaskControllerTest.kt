@@ -75,8 +75,8 @@ class TaskControllerTest {
 
     @Test
     fun `should return 200 with active tasks for the house`() {
-        createTaskUsecase.execute(captain.id!!, "Sweep floor", null, Effort.LOW, null, house.id!!, category.id!!)
-        createTaskUsecase.execute(captain.id!!, "Mop floor", null, Effort.MEDIUM, null, house.id!!, category.id!!)
+        createTaskUsecase.execute(captain.id!!, "Sweep floor", null, Effort.LOW, null, null, house.id!!, category.id!!)
+        createTaskUsecase.execute(captain.id!!, "Mop floor", null, Effort.MEDIUM, null, null, house.id!!, category.id!!)
 
         val response = controller.getActiveTasks(authAs(captain))
 
@@ -147,7 +147,7 @@ class TaskControllerTest {
 
     @Test
     fun `should return 200 with updated task title`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Old Title", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Old Title", null, Effort.LOW, null, null, house.id!!, category.id!!)
 
         val response = controller.update(task.id!!, UpdateTaskRequest(title = "New Title"), authAs(captain))
 
@@ -157,7 +157,7 @@ class TaskControllerTest {
 
     @Test
     fun `should return 200 with updated effort and kudos value`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
 
         val response = controller.update(task.id!!, UpdateTaskRequest(effort = Effort.HIGH), authAs(captain))
 
@@ -176,7 +176,7 @@ class TaskControllerTest {
 
     @Test
     fun `should return 204 when captain deletes an OPEN task`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Task to delete", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Task to delete", null, Effort.LOW, null, null, house.id!!, category.id!!)
 
         val response = controller.delete(task.id!!, authAs(captain))
 
@@ -185,7 +185,7 @@ class TaskControllerTest {
 
     @Test
     fun `should throw when non-captain tries to delete a task`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
 
         assertThrows(IllegalArgumentException::class.java) {
             controller.delete(task.id!!, authAs(member))
@@ -203,7 +203,7 @@ class TaskControllerTest {
 
     @Test
     fun `should return 200 with task in ASSIGNED status`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
 
         val response = controller.assign(task.id!!, authAs(member))
 
@@ -214,7 +214,7 @@ class TaskControllerTest {
 
     @Test
     fun `should throw when assigning an already assigned task`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
         assignTaskUsecase.execute(task.id!!, captain.id!!)
 
         assertThrows(IllegalArgumentException::class.java) {
@@ -226,7 +226,7 @@ class TaskControllerTest {
 
     @Test
     fun `should return 200 with task back to OPEN after unassign`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
         assignTaskUsecase.execute(task.id!!, member.id!!)
 
         val response = controller.unassign(task.id, authAs(member))
@@ -238,7 +238,7 @@ class TaskControllerTest {
 
     @Test
     fun `should throw when unassigning a task belonging to another user`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
         assignTaskUsecase.execute(task.id!!, member.id!!)
 
         assertThrows(IllegalArgumentException::class.java) {
@@ -250,7 +250,7 @@ class TaskControllerTest {
 
     @Test
     fun `should return 200 with task in PENDING_REVIEW status`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
         assignTaskUsecase.execute(task.id!!, member.id!!)
 
         val response = controller.complete(task.id)
@@ -262,7 +262,7 @@ class TaskControllerTest {
 
     @Test
     fun `should throw when completing a task that is not assigned`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
 
         assertThrows(IllegalArgumentException::class.java) {
             controller.complete(task.id!!)
@@ -273,7 +273,7 @@ class TaskControllerTest {
 
     @Test
     fun `should return 200 with APPROVED status on APPROVE decision`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
         assignTaskUsecase.execute(task.id!!, member.id!!)
         completeTaskUsecase.execute(task.id)
 
@@ -285,7 +285,7 @@ class TaskControllerTest {
 
     @Test
     fun `should return 200 with DISPUTED status on DISPUTE decision`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
         assignTaskUsecase.execute(task.id!!, member.id!!)
         completeTaskUsecase.execute(task.id)
 
@@ -297,7 +297,7 @@ class TaskControllerTest {
 
     @Test
     fun `should throw when user validates their own task`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
         assignTaskUsecase.execute(task.id!!, member.id!!)
         completeTaskUsecase.execute(task.id)
 
@@ -308,7 +308,7 @@ class TaskControllerTest {
 
     @Test
     fun `should throw when validating a task that is not PENDING_REVIEW`() {
-        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, house.id!!, category.id!!)
+        val task = createTaskUsecase.execute(captain.id!!, "Task", null, Effort.LOW, null, null, house.id!!, category.id!!)
         assignTaskUsecase.execute(task.id!!, member.id!!)
 
         assertThrows(IllegalArgumentException::class.java) {

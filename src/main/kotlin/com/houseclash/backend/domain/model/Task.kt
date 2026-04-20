@@ -37,18 +37,20 @@ data class Task(
     val categoryId: Long,
     val isForced: Boolean = false,
     val recurrence: Recurrence? = null,
+    val deadline: LocalDateTime? = null,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val completedAt: LocalDateTime? = null,
     val version: Long = 0
 ) {
     companion object {
-        fun create(title: String, description: String?, effort: Effort, recurrence: Recurrence? = null, houseId: Long, categoryId: Long): Task {
+        fun create(title: String, description: String?, effort: Effort, recurrence: Recurrence? = null, deadline: LocalDateTime? = null, houseId: Long, categoryId: Long): Task {
             require(title.isNotBlank()) { "Title cannot be blank" }
             return Task(
                 title = title,
                 description = description,
                 effort = effort,
                 recurrence = recurrence,
+                deadline = deadline,
                 houseId = houseId,
                 categoryId = categoryId
             )
@@ -83,7 +85,7 @@ data class Task(
     }
 
     fun completeTask() : Task {
-        require(status == TaskStatus.ASSIGNED) { "Task must be assigned to be completed" }
+        require(status in listOf(TaskStatus.ASSIGNED, TaskStatus.DISPUTED)) { "Task must be assigned or disputed to be completed" }
         return this.copy(
             status = TaskStatus.PENDING_REVIEW,
             completedAt = LocalDateTime.now()
@@ -140,13 +142,35 @@ data class Task(
         return isClosedStatus && completedInPreviousCycle
     }
 
+    fun isOverdueUncompletedCycle(now: LocalDateTime = LocalDateTime.now()): Boolean {
+        if (recurrence == null) return false
+        val isInProgressStatus = status in listOf(TaskStatus.ASSIGNED, TaskStatus.PENDING_REVIEW)
+        val cycleStart = currentCycleStart(now) ?: return false
+        return isInProgressStatus && cycleStart > createdAt
+    }
+
+    fun isDeadlineExpired(now: LocalDateTime = LocalDateTime.now()): Boolean {
+        return deadline?.isBefore(now) ?: false
+    }
+
+    fun isOverdueByDeadline(now: LocalDateTime = LocalDateTime.now()): Boolean {
+        val isInProgressStatus = status in listOf(TaskStatus.ASSIGNED, TaskStatus.PENDING_REVIEW, TaskStatus.OPEN)
+        return isDeadlineExpired(now) && isInProgressStatus
+    }
+
+    fun isCompletedAfterDeadline(): Boolean {
+        if (deadline == null || completedAt == null) return false
+        return completedAt.isAfter(deadline)
+    }
+
     fun resetForNextCycle(): Task {
         require(recurrence != null) { "Task is not recurrent" }
         return this.copy(
             status = TaskStatus.OPEN,
             assignedTo = null,
             completedAt = null,
-            kudosValue = effort.baseKudos
+            kudosValue = effort.baseKudos,
+            deadline = deadline?.plus(recurrence.period)
         )
     }
 
@@ -166,8 +190,21 @@ data class Task(
         newDescription: String? = null,
         newEffort: Effort? = null,
         newRecurrence: Recurrence? = null,
+        newDeadline: LocalDateTime? = null,
+        clearDeadline: Boolean = false,
         newCategoryId: Long? = null
     ): Task {
+        val effectiveDeadline = when {
+            clearDeadline -> null
+            newDeadline != null -> newDeadline
+            else -> this.deadline
+        }
+        require(effectiveDeadline == this.deadline || status == TaskStatus.OPEN) {
+            "Deadline can only be changed while the task is open"
+        }
+        require(newEffort == null || newEffort == effort || status == TaskStatus.OPEN) {
+            "Effort can only be changed while the task is open"
+        }
         val updatedEffort = newEffort ?: this.effort
         val updatedKudosValue = if (newEffort != null && newEffort != this.effort) {
             newEffort.baseKudos
@@ -181,6 +218,7 @@ data class Task(
             effort = updatedEffort,
             kudosValue = updatedKudosValue,
             recurrence = newRecurrence ?: this.recurrence,
+            deadline = effectiveDeadline,
             categoryId = newCategoryId ?: this.categoryId
         )
     }

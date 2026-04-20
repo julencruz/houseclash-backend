@@ -13,6 +13,7 @@ data class CreateTaskRequest(
     val description: String? = null,
     val effort: Effort,
     val recurrence: String? = null,
+    val deadline: LocalDateTime? = null,
     val houseId: Long,
     val categoryId: Long
 )
@@ -22,6 +23,7 @@ data class UpdateTaskRequest(
     val description: String? = null,
     val effort: Effort? = null,
     val recurrence: String? = null,
+    val deadline: LocalDateTime? = null,
     val categoryId: Long? = null
 )
 
@@ -43,6 +45,7 @@ data class TaskResponse(
     val categoryId: Long,
     val isForced: Boolean,
     val recurrence: Recurrence?,
+    val deadline: LocalDateTime?,
     val createdAt: LocalDateTime,
     val completedAt: LocalDateTime?
 )
@@ -61,6 +64,7 @@ fun Task.toResponse() = TaskResponse(
     categoryId = this.categoryId,
     isForced = this.isForced,
     recurrence = this.recurrence,
+    deadline = this.deadline,
     createdAt = this.createdAt,
     completedAt = this.completedAt
 )

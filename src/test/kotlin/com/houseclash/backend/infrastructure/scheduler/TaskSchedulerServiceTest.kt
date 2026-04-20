@@ -24,7 +24,7 @@ class TaskSchedulerServiceTest {
     private val houseRepository = HouseRepositoryTester()
     private val taskRepository = TaskRepositoryTester()
 
-    private val recurringTaskSchedulerUsecase = RecurringTaskSchedulerUsecase(taskRepository, FIXED_NOW)
+    private val recurringTaskSchedulerUsecase = RecurringTaskSchedulerUsecase(taskRepository) { FIXED_NOW }
     private val autoApproveExpiredTasksUsecase = AutoApproveExpiredTasksUsecase(taskRepository, userRepository)
     private val applyMarketInflationUsecase = ApplyMarketInflationUsecase(taskRepository)
 
@@ -45,11 +45,11 @@ class TaskSchedulerServiceTest {
         val house2 = TestDataFactory.createHouse(houseRepository, userRepository, user2, "Casa 2")
 
         val taskHouse1 = taskRepository.save(
-            Task.create("Tarea C1", null, Effort.LOW, Recurrence.WEEKLY, house1.id!!, 1L)
+            Task.create("Tarea C1", null, Effort.LOW, Recurrence.WEEKLY, null, house1.id!!, 1L)
                 .copy(status = TaskStatus.APPROVED, completedAt = FIXED_NOW.minusDays(8), createdAt = FIXED_NOW.minusDays(8))
         )
         val taskHouse2 = taskRepository.save(
-            Task.create("Tarea C2", null, Effort.MEDIUM, Recurrence.WEEKLY, house2.id!!, 1L)
+            Task.create("Tarea C2", null, Effort.MEDIUM, Recurrence.WEEKLY, null, house2.id!!, 1L)
                 .copy(status = TaskStatus.APPROVED, completedAt = FIXED_NOW.minusDays(8), createdAt = FIXED_NOW.minusDays(8))
         )
 
@@ -65,7 +65,7 @@ class TaskSchedulerServiceTest {
         val house = TestDataFactory.createHouse(houseRepository, userRepository, user)
 
         val task = taskRepository.save(
-            Task.create("Tarea recurrente", null, Effort.LOW, Recurrence.WEEKLY, house.id!!, 1L)
+            Task.create("Tarea recurrente", null, Effort.LOW, Recurrence.WEEKLY, null, house.id!!, 1L)
                 .copy(status = TaskStatus.APPROVED, completedAt = FIXED_NOW.minusDays(1), createdAt = FIXED_NOW.minusDays(1))
         )
 
@@ -80,13 +80,8 @@ class TaskSchedulerServiceTest {
         val house = TestDataFactory.createHouse(houseRepository, userRepository, user)
 
         val task = taskRepository.save(
-            Task.create("Tarea recurrente", null, Effort.MEDIUM, Recurrence.WEEKLY, house.id!!, 1L)
-                .copy(
-                    status = TaskStatus.APPROVED,
-                    completedAt = FIXED_NOW.minusDays(8),
-                    createdAt = FIXED_NOW.minusDays(8),
-                    kudosValue = 20
-                )
+            Task.create("Tarea recurrente", null, Effort.MEDIUM, Recurrence.WEEKLY, null, house.id!!, 1L)
+                .copy(status = TaskStatus.APPROVED, completedAt = FIXED_NOW.minusDays(8), createdAt = FIXED_NOW.minusDays(8), kudosValue = 20)
         )
 
         scheduler.scheduleRecurringTasks()
@@ -107,11 +102,11 @@ class TaskSchedulerServiceTest {
         val house2 = TestDataFactory.createHouse(houseRepository, userRepository, user2, "Casa 2")
 
         val taskHouse1 = taskRepository.save(
-            Task.create("Tarea C1", null, Effort.LOW, null, house1.id!!, 1L)
+            Task.create("Tarea C1", null, Effort.LOW, null, null, house1.id!!, 1L)
                 .copy(status = TaskStatus.PENDING_REVIEW, assignedTo = user1.id, completedAt = LocalDateTime.now().minusHours(73))
         )
         val taskHouse2 = taskRepository.save(
-            Task.create("Tarea C2", null, Effort.LOW, null, house2.id!!, 1L)
+            Task.create("Tarea C2", null, Effort.LOW, null, null, house2.id!!, 1L)
                 .copy(status = TaskStatus.PENDING_REVIEW, assignedTo = user2.id, completedAt = LocalDateTime.now().minusHours(73))
         )
 
@@ -127,7 +122,7 @@ class TaskSchedulerServiceTest {
         val house = TestDataFactory.createHouse(houseRepository, userRepository, user)
 
         val task = taskRepository.save(
-            Task.create("Tarea pendiente", null, Effort.LOW, null, house.id!!, 1L)
+            Task.create("Tarea pendiente", null, Effort.LOW, null, null, house.id!!, 1L)
                 .copy(status = TaskStatus.PENDING_REVIEW, assignedTo = user.id, completedAt = LocalDateTime.now().minusHours(1))
         )
 
@@ -143,7 +138,7 @@ class TaskSchedulerServiceTest {
         val kudosBefore = userRepository.findById(user.id!!)!!.kudosBalance
 
         val task = taskRepository.save(
-            Task.create("Tarea", null, Effort.MEDIUM, null, house.id!!, 1L)
+            Task.create("Tarea", null, Effort.MEDIUM, null, null, house.id!!, 1L)
                 .copy(status = TaskStatus.PENDING_REVIEW, assignedTo = user.id, completedAt = LocalDateTime.now().minusHours(73))
         )
 
@@ -190,13 +185,12 @@ class TaskSchedulerServiceTest {
     @Test
     fun `applyMarketInflation should not affect tasks when there are no houses`() {
         val task = taskRepository.save(
-            Task.create("Tarea huerfana", null, Effort.LOW, null, 999L, 1L)
+            Task.create("Tarea huerfana", null, Effort.LOW, null, null, 999L, 1L)
         )
         val kudosBefore = task.kudosValue
 
         scheduler.applyMarketInflation()
 
-        // No houses in houseRepository → no calls to usecase → kudos unchanged
         assertEquals(kudosBefore, taskRepository.findById(task.id!!)!!.kudosValue)
     }
 }

@@ -41,6 +41,16 @@ class TaskRepositoryTester : TaskRepository {
         }
     }
 
+    override fun findOverdueAssignedRecurringTasks(): List<Task> {
+        return tasks.filter {
+            it.recurrence != null && it.isOverdueUncompletedCycle()
+        }
+    }
+
+    override fun findTasksOverdueByDeadline(): List<Task> {
+        return tasks.filter { it.deadline != null && it.isOverdueByDeadline() }
+    }
+
     override fun findByCategoryId(categoryId: Long): List<Task> {
         return tasks.filter { it.categoryId == categoryId }
     }

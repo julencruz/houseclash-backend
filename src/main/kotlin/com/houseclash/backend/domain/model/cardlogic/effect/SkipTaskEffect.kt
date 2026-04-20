@@ -14,6 +14,9 @@ class SkipTaskEffect : CardEffect {
         require(context.targetTask.status == TaskStatus.ASSIGNED) {
             "Task must be assigned to skip it"
         }
+        require(!context.targetTask.isForced) {
+            "Cannot skip a forced task."
+        }
 
         val updatedTask = context.targetTask.copy(
             assignedTo = null,

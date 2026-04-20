@@ -48,6 +48,6 @@ object TestDataFactory {
         effort: Effort = Effort.MEDIUM,
         categoryId: Long = 1L
     ): Task {
-        return taskRepository.save(Task.create(title, null, effort, null, houseId, categoryId))
+        return taskRepository.save(Task.create(title, null, effort, null, null, houseId, categoryId))
     }
 }

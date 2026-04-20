@@ -24,7 +24,7 @@ class CreateTaskUsecaseTest {
         val user = registerUsecase.execute("Test", "test@email.com", "Password1")
         val house = createHouseUsecase.execute(user.id!!, "Pis de Gràcia")
         val category = TestDataFactory.createCategory(categoryRepository, house.id!!)
-        val task = usecase.execute(user.id, "Comprar pa", "Comprar pa al forn de la cantonada", Effort.MEDIUM, null, house.id, category.id!!)
+        val task = usecase.execute(user.id, "Comprar pa", "Comprar pa al forn de la cantonada", Effort.MEDIUM, null, null, house.id, category.id!!)
         assertEquals("Comprar pa", task.title)
     }
 
@@ -33,7 +33,7 @@ class CreateTaskUsecaseTest {
         val user = registerUsecase.execute("Test", "test@email.com", "Password1")
         val house = createHouseUsecase.execute(user.id!!, "Pis de Gràcia")
         val category = TestDataFactory.createCategory(categoryRepository, house.id!!)
-        val task = usecase.execute(user.id, "Comprar pa", null, Effort.MEDIUM, null, house.id, category.id!!)
+        val task = usecase.execute(user.id, "Comprar pa", null, Effort.MEDIUM, null, null, house.id, category.id!!)
         assertEquals(4, task.kudosValue)
     }
 
@@ -41,7 +41,7 @@ class CreateTaskUsecaseTest {
     fun `should throw when house does not exist`() {
         val user = registerUsecase.execute("Test", "test@email.com", "Password1")
         assertThrows(IllegalArgumentException::class.java) {
-            usecase.execute(user.id!!, "Comprar pa", null, Effort.LOW, null, 999L, 1L)
+            usecase.execute(user.id!!, "Comprar pa", null, Effort.LOW, null, null, 999L, 1L)
         }
     }
 
@@ -51,7 +51,7 @@ class CreateTaskUsecaseTest {
         val house = createHouseUsecase.execute(user.id!!, "Pis de Gràcia")
         val category = TestDataFactory.createCategory(categoryRepository, house.id!!)
         assertThrows(IllegalArgumentException::class.java) {
-            usecase.execute(user.id, "", null, Effort.LOW, null, house.id, category.id!!)
+            usecase.execute(user.id, "", null, Effort.LOW, null, null, house.id, category.id!!)
         }
     }
 
@@ -60,7 +60,7 @@ class CreateTaskUsecaseTest {
         val user = registerUsecase.execute("Test", "test@email.com", "Password1")
         val house = createHouseUsecase.execute(user.id!!, "Pis de Gràcia")
         assertThrows(IllegalArgumentException::class.java) {
-            usecase.execute(user.id, "Comprar pa", null, Effort.LOW, null, house.id!!, 999L)
+            usecase.execute(user.id, "Comprar pa", null, Effort.LOW, null, null, house.id!!, 999L)
         }
     }
 
@@ -72,7 +72,7 @@ class CreateTaskUsecaseTest {
         val house2 = createHouseUsecase.execute(user2.id!!, "Pis de Pobre")
         val categoryFromHouse2 = TestDataFactory.createCategory(categoryRepository, house2.id!!)
         assertThrows(IllegalArgumentException::class.java) {
-            usecase.execute(user.id, "Comprar pa", null, Effort.LOW, null, house1.id!!, categoryFromHouse2.id!!)
+            usecase.execute(user.id, "Comprar pa", null, Effort.LOW, null, null, house1.id!!, categoryFromHouse2.id!!)
         }
     }
 }

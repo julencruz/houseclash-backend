@@ -35,7 +35,7 @@ class GetUserCardsUsecaseTest {
     fun `should not return cards belonging to another user`() {
         val otherUser = TestDataFactory.createUser(userRepository, "Other", "other@email.com")
         cardRepository.save(Card.create(otherUser.id!!, CardType.HOUSE_BONUS))
-        cardRepository.save(Card.create(user.id!!, CardType.GRACE_PERIOD))
+        cardRepository.save(Card.create(user.id!!, CardType.FAST_TRACK))
 
         val cards = usecase.execute(user.id)
         assertEquals(1, cards.size)
