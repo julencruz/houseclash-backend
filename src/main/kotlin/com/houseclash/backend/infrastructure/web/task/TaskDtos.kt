@@ -7,7 +7,7 @@ import com.houseclash.backend.domain.model.Task
 import com.houseclash.backend.domain.model.TaskStatus
 import java.time.LocalDateTime
 
-// --- REQUESTS ---
+ 
 
 data class CreateTaskRequest(
     val title: String,
@@ -35,7 +35,7 @@ data class ValidateTaskRequest(
     val decision: String  // "APPROVE" | "DISPUTE"
 )
 
-// --- RESPONSES ---
+ 
 
 data class CategorySummary(
     val id: Long,
@@ -60,7 +60,7 @@ data class TaskResponse(
     val completedAt: LocalDateTime?
 )
 
-// --- MAPPERS ---
+ 
 
 fun Task.toResponse(category: Category) = TaskResponse(
     id = this.id!!,

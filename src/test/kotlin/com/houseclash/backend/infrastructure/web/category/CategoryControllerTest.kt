@@ -45,7 +45,7 @@ class CategoryControllerTest {
 
     private fun captainAuth() = UsernamePasswordAuthenticationToken(captain.id!!, null, emptyList())
 
-    // ---- getCategories ----
+    
 
     @Test
     fun `should return 200 with only the default category when no extra categories are created`() {
@@ -77,7 +77,7 @@ class CategoryControllerTest {
         }
     }
 
-    // ---- create ----
+    
 
     @Test
     fun `should return 201 with category data when captain creates a category`() {
@@ -123,7 +123,7 @@ class CategoryControllerTest {
         }
     }
 
-    // ---- update ----
+    
 
     @Test
     fun `should return 200 with updated category name`() {
@@ -157,7 +157,7 @@ class CategoryControllerTest {
         }
     }
 
-    // ---- delete ----
+    
 
     @Test
     fun `should return 204 when captain deletes an empty category`() {

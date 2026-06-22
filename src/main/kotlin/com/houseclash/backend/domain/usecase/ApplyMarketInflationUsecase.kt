@@ -18,7 +18,6 @@ class ApplyMarketInflationUsecase(
                 taskRepository.save(task.applyMarketInflation())
             }
 
-            // Use houseId as actorUserId placeholder (system action) — frontend should handle actorUserId=0 as "System"
             activityLogRepository.save(ActivityLog(
                 houseId = houseId,
                 type = ActivityLogType.MARKET_INFLATION,

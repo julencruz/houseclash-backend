@@ -1,4 +1,3 @@
-// infrastructure/web/house/HouseController.kt
 package com.houseclash.backend.infrastructure.web.house
 
 import com.houseclash.backend.domain.model.RankingPeriod

@@ -48,7 +48,7 @@ class CardControllerTest {
 
     private fun authAs(user: User) = UsernamePasswordAuthenticationToken(user.id!!, null, emptyList())
 
-    // ---- getMyCards ----
+    
 
     @Test
     fun `should return 200 with empty list when user has no cards`() {
@@ -83,11 +83,11 @@ class CardControllerTest {
         assertTrue(response.body!!.all { it.userId == owner.id })
     }
 
-    // ---- openPack ----
+    
 
     @Test
     fun `should return 200 with exactly 4 cards when user has enough kudos`() {
-        // owner already has WELCOME_BONUS_KUDOS (50) from creating the house
+        
 
         val response = controller.openPack(authAs(owner))
 
@@ -97,7 +97,7 @@ class CardControllerTest {
 
     @Test
     fun `should deduct kudos after opening a pack`() {
-        // owner already has WELCOME_BONUS_KUDOS (50) from creating the house
+        
 
         controller.openPack(authAs(owner))
 
@@ -107,7 +107,6 @@ class CardControllerTest {
 
     @Test
     fun `should throw when user has insufficient kudos to open a pack`() {
-        // drain the welcome bonus so kudosBalance < PACK_COST
         owner = userRepository.save(owner.copy(kudosBalance = 0))
 
         assertThrows(IllegalArgumentException::class.java) {

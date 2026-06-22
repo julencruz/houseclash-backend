@@ -49,11 +49,11 @@ class SecurityConfig(
             .httpBasic { it.disable() }
             .formLogin { it.disable() }
             .exceptionHandling { ex ->
-                // 401 - No token or invalid token
+                
                 ex.authenticationEntryPoint { _, response, _ ->
                     writeError(response, HttpStatus.UNAUTHORIZED, "Unauthorized", "Authentication required. Please provide a valid token.")
                 }
-                // 403 - Valid token but insufficient permissions
+                
                 ex.accessDeniedHandler { _, response, _ ->
                     writeError(response, HttpStatus.FORBIDDEN, "Forbidden", "You do not have permission to perform this action")
                 }

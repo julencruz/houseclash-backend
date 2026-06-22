@@ -43,7 +43,7 @@ class TaskSchedulerServiceTest {
         houseRepository
     )
 
-    // ---- scheduleRecurringTasks ----
+    
 
     @Test
     fun `scheduleRecurringTasks should reset recurring tasks due in all houses`() {

@@ -27,11 +27,7 @@ class GlobalExceptionHandler {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    // --- 400 Bad Request ---
-
-    /**
-     * Handles domain business rule violations thrown by require() or check().
-     */
+    
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgument(ex: IllegalArgumentException): ResponseEntity<ErrorResponse> {
         logger.warn("Business rule violation: {}", ex.message)
@@ -44,9 +40,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    /**
-     * Handles invalid state transitions in domain logic.
-     */
+    
     @ExceptionHandler(IllegalStateException::class)
     fun handleIllegalState(ex: IllegalStateException): ResponseEntity<ErrorResponse> {
         logger.warn("Invalid state: {}", ex.message)
@@ -59,9 +53,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    /**
-     * Handles malformed or unreadable JSON request bodies.
-     */
+    
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleUnreadableBody(ex: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
         logger.warn("Malformed request body: {}", ex.message)
@@ -74,9 +66,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    /**
-     * Handles Bean Validation failures (@Valid / @Validated annotations).
-     */
+    
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidation(ex: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
         val details = ex.bindingResult.fieldErrors.joinToString("; ") { "${it.field}: ${it.defaultMessage}" }
@@ -90,11 +80,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    // --- 401 Unauthorized ---
-
-    /**
-     * Handles authentication failures (missing or invalid JWT token).
-     */
+    
     @ExceptionHandler(AuthenticationException::class)
     fun handleAuthentication(ex: AuthenticationException): ResponseEntity<ErrorResponse> {
         logger.warn("Authentication failure: {}", ex.message)
@@ -107,11 +93,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    // --- 403 Forbidden ---
-
-    /**
-     * Handles authorization failures (authenticated but not allowed to perform the action).
-     */
+    
     @ExceptionHandler(AccessDeniedException::class)
     fun handleAccessDenied(ex: AccessDeniedException): ResponseEntity<ErrorResponse> {
         logger.warn("Access denied: {}", ex.message)
@@ -124,11 +106,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    // --- 404 Not Found ---
-
-    /**
-     * Handles requests to non-existent endpoints.
-     */
+    
     @ExceptionHandler(NoResourceFoundException::class)
     fun handleNoResourceFound(ex: NoResourceFoundException): ResponseEntity<ErrorResponse> {
         logger.warn("Resource not found: {}", ex.message)
@@ -141,11 +119,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    // --- 405 Method Not Allowed ---
-
-    /**
-     * Handles requests using an unsupported HTTP method on a valid endpoint.
-     */
+    
     @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
     fun handleMethodNotAllowed(ex: HttpRequestMethodNotSupportedException): ResponseEntity<ErrorResponse> {
         logger.warn("Method not allowed: {}", ex.message)
@@ -158,13 +132,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    // --- 409 Conflict ---
-
-    /**
-     * Handles optimistic locking conflicts (@Version).
-     * Occurs when two processes read the same task and the second one tries
-     * to save with a stale version number. After retries are exhausted, this is returned.
-     */
+    
     @ExceptionHandler(ObjectOptimisticLockingFailureException::class, OptimisticLockingFailureException::class)
     fun handleOptimisticLockingFailure(ex: Exception): ResponseEntity<ErrorResponse> {
         logger.warn("Optimistic locking conflict detected: {}", ex.message)
@@ -177,11 +145,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    // --- 500 Internal Server Error ---
-
-    /**
-     * Catch-all handler for any unexpected exception not covered above.
-     */
+    
     @ExceptionHandler(Exception::class)
     fun handleGeneric(ex: Exception): ResponseEntity<ErrorResponse> {
         logger.error("Unexpected error: {}", ex.message, ex)

@@ -1,4 +1,3 @@
-// infrastructure/web/house/HouseDTOs.kt
 package com.houseclash.backend.infrastructure.web.house
 
 import com.houseclash.backend.domain.model.House

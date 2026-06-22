@@ -92,7 +92,7 @@ class TaskControllerTest {
         }
     }
 
-    // ---- create ----
+    
 
     @Test
     fun `should return 201 with created task`() {
@@ -142,7 +142,7 @@ class TaskControllerTest {
         }
     }
 
-    // ---- update ----
+    
 
     @Test
     fun `should return 200 with updated task title`() {
@@ -171,7 +171,7 @@ class TaskControllerTest {
         }
     }
 
-    // ---- delete ----
+    
 
     @Test
     fun `should return 204 when captain deletes an OPEN task`() {
@@ -198,7 +198,7 @@ class TaskControllerTest {
         }
     }
 
-    // ---- assign ----
+    
 
     @Test
     fun `should return 200 with task in ASSIGNED status`() {
@@ -221,7 +221,7 @@ class TaskControllerTest {
         }
     }
 
-    // ---- unassign ----
+    
 
     @Test
     fun `should return 200 with task back to OPEN after unassign`() {
@@ -245,7 +245,7 @@ class TaskControllerTest {
         }
     }
 
-    // ---- complete ----
+    
 
     @Test
     fun `should return 200 with task in PENDING_REVIEW status`() {
@@ -268,7 +268,7 @@ class TaskControllerTest {
         }
     }
 
-    // ---- validate ----
+    
 
     @Test
     fun `should return 200 with APPROVED status on APPROVE decision`() {

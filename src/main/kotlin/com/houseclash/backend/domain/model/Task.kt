@@ -11,18 +11,18 @@ enum class Recurrence(val period: Period) {
 }
 
 enum class Effort(val baseKudos: Int) {
-    LOW(2),      // Simple tasks, such as taking out the trash or doing the dishes
-    MEDIUM(4),   // Moderate tasks, such as cleaning the bathroom or doing the groceries
-    HIGH(8)      // Complex tasks, such as painting a room or repairing an appliance
+    LOW(2),
+    MEDIUM(4),
+    HIGH(8)
 }
 
 enum class TaskStatus {
-    OPEN,            // Available for assignment
-    ASSIGNED,        // The user has accepted the task
-    PENDING_REVIEW,  // Pending validation
-    APPROVED,        // Validated by peers
-    AUTO_APPROVED,   // Automatically validated after 24h
-    DISPUTED         // Someone has denied the validation
+    OPEN,
+    ASSIGNED,
+    PENDING_REVIEW,
+    APPROVED,
+    AUTO_APPROVED,
+    DISPUTED
 }
 
 data class Task(

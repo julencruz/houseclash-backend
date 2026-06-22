@@ -39,7 +39,7 @@ class HouseControllerTest {
         getHouseRankingUsecase
     )
 
-    // ---- create ----
+    
 
     @Test
     fun `should return 201 with house data when creating a house`() {
@@ -64,7 +64,7 @@ class HouseControllerTest {
         }
     }
 
-    // ---- getMyHouse ----
+    
 
     @Test
     fun `should return 200 with house details for user in a house`() {
@@ -89,7 +89,7 @@ class HouseControllerTest {
         }
     }
 
-    // ---- join ----
+    
 
     @Test
     fun `should return 200 and user with houseId after joining`() {
@@ -125,7 +125,7 @@ class HouseControllerTest {
         }
     }
 
-    // ---- leave ----
+    
 
     @Test
     fun `should return 204 when a non-captain member leaves the house`() {
@@ -153,7 +153,7 @@ class HouseControllerTest {
         }
     }
 
-    // ---- kick ----
+    
 
     @Test
     fun `should return 200 and kicked user with null houseId`() {
@@ -182,7 +182,7 @@ class HouseControllerTest {
         }
     }
 
-    // ---- transferOwnership ----
+    
 
     @Test
     fun `should return 200 with house showing new captain`() {
@@ -211,7 +211,7 @@ class HouseControllerTest {
         }
     }
 
-    // ---- update ----
+    
 
     @Test
     fun `should return 200 with updated house name`() {
@@ -238,7 +238,7 @@ class HouseControllerTest {
         }
     }
 
-    // ---- getRanking ----
+    
 
     @Test
     fun `should return 200 with ranking list containing the house members`() {
