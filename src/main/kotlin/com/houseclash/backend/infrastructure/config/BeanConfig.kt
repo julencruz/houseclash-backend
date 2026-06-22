@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class BeanConfig {
 
-    
+
 
     @Bean
     fun registerUserUsecase(userRepository: UserRepository, passwordEncoder: PasswordEncoder) =
@@ -26,7 +26,7 @@ class BeanConfig {
     fun updateUserUsecase(userRepository: UserRepository, passwordEncoder: PasswordEncoder) =
         UpdateUserUsecase(userRepository, passwordEncoder)
 
-    
+
 
     @Bean
     fun createHouseUsecase(userRepository: UserRepository, houseRepository: HouseRepository, categoryRepository: CategoryRepository) =
@@ -77,7 +77,7 @@ class BeanConfig {
     fun getHouseRankingUsecase(userRepository: UserRepository, taskRepository: TaskRepository) =
         GetHouseRankingUsecase(userRepository, taskRepository)
 
-    
+
 
     @Bean
     fun getHouseCategoriesUsecase(userRepository: UserRepository, categoryRepository: CategoryRepository) =
@@ -105,7 +105,7 @@ class BeanConfig {
         houseRepository: HouseRepository
     ) = DeleteCategoryUsecase(categoryRepository, userRepository, taskRepository, houseRepository)
 
-    
+
 
     @Bean
     fun getActiveTasksUsecase(userRepository: UserRepository, taskRepository: TaskRepository) =
@@ -159,7 +159,7 @@ class BeanConfig {
         activityLogRepository: ActivityLogRepository
     ) = ValidateTaskUsecase(taskRepository, userRepository, activityLogRepository)
 
-    
+
 
     @Bean
     fun getUserCardsUsecase(userRepository: UserRepository, cardRepository: CardRepository) =
@@ -177,7 +177,7 @@ class BeanConfig {
         activityLogRepository: ActivityLogRepository
     ) = ExecuteCardEffectUsecase(cardRepository, userRepository, taskRepository, activityLogRepository)
 
-    
+
 
     @Bean
     fun applyMarketInflationUsecase(
@@ -196,7 +196,7 @@ class BeanConfig {
     fun recurringTaskSchedulerUsecase(taskRepository: TaskRepository) =
         RecurringTaskSchedulerUsecase(taskRepository)
 
-    
+
 
     @Bean
     fun getActivityLogUsecase(

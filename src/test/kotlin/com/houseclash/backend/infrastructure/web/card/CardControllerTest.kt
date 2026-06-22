@@ -48,7 +48,7 @@ class CardControllerTest {
 
     private fun authAs(user: User) = UsernamePasswordAuthenticationToken(user.id!!, null, emptyList())
 
-    
+
 
     @Test
     fun `should return 200 with empty list when user has no cards`() {
@@ -83,11 +83,11 @@ class CardControllerTest {
         assertTrue(response.body!!.all { it.userId == owner.id })
     }
 
-    
+
 
     @Test
     fun `should return 200 with exactly 4 cards when user has enough kudos`() {
-        
+
 
         val response = controller.openPack(authAs(owner))
 
@@ -97,7 +97,7 @@ class CardControllerTest {
 
     @Test
     fun `should deduct kudos after opening a pack`() {
-        
+
 
         controller.openPack(authAs(owner))
 

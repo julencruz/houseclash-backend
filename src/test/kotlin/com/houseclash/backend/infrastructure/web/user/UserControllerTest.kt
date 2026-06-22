@@ -31,7 +31,7 @@ class UserControllerTest {
         jwtService
     )
 
-    
+
 
     @Test
     fun `should return 201 and user data when registering a new user`() {
@@ -52,7 +52,7 @@ class UserControllerTest {
         }
     }
 
-    
+
 
     @Test
     fun `should return 200 with token and user on successful login`() {
@@ -91,7 +91,7 @@ class UserControllerTest {
         }
     }
 
-    
+
 
     @Test
     fun `should return 200 with user profile`() {
@@ -114,7 +114,7 @@ class UserControllerTest {
         }
     }
 
-    
+
 
     @Test
     fun `should return 200 and updated username`() {

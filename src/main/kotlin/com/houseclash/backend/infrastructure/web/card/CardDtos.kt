@@ -10,7 +10,7 @@ import com.houseclash.backend.infrastructure.web.user.UserResponse
 import com.houseclash.backend.infrastructure.web.user.toResponse
 import java.time.LocalDateTime
 
- 
+
 
 data class UseCardRequest(
     val targetUserId: Long? = null,
@@ -18,7 +18,7 @@ data class UseCardRequest(
     val targetCategoryId: Long? = null
 )
 
- 
+
 
 data class CardResponse(
     val id: Long,
@@ -33,7 +33,7 @@ data class CardEffectResultResponse(
     val updatedTasks: List<TaskResponse>
 )
 
- 
+
 
 fun Card.toResponse() = CardResponse(
     id = this.id!!,

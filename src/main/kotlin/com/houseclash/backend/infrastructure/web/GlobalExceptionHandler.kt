@@ -27,7 +27,7 @@ class GlobalExceptionHandler {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    
+
     @ExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgument(ex: IllegalArgumentException): ResponseEntity<ErrorResponse> {
         logger.warn("Business rule violation: {}", ex.message)
@@ -40,7 +40,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    
+
     @ExceptionHandler(IllegalStateException::class)
     fun handleIllegalState(ex: IllegalStateException): ResponseEntity<ErrorResponse> {
         logger.warn("Invalid state: {}", ex.message)
@@ -53,7 +53,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    
+
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleUnreadableBody(ex: HttpMessageNotReadableException): ResponseEntity<ErrorResponse> {
         logger.warn("Malformed request body: {}", ex.message)
@@ -66,7 +66,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    
+
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidation(ex: MethodArgumentNotValidException): ResponseEntity<ErrorResponse> {
         val details = ex.bindingResult.fieldErrors.joinToString("; ") { "${it.field}: ${it.defaultMessage}" }
@@ -80,7 +80,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    
+
     @ExceptionHandler(AuthenticationException::class)
     fun handleAuthentication(ex: AuthenticationException): ResponseEntity<ErrorResponse> {
         logger.warn("Authentication failure: {}", ex.message)
@@ -93,7 +93,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    
+
     @ExceptionHandler(AccessDeniedException::class)
     fun handleAccessDenied(ex: AccessDeniedException): ResponseEntity<ErrorResponse> {
         logger.warn("Access denied: {}", ex.message)
@@ -106,7 +106,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    
+
     @ExceptionHandler(NoResourceFoundException::class)
     fun handleNoResourceFound(ex: NoResourceFoundException): ResponseEntity<ErrorResponse> {
         logger.warn("Resource not found: {}", ex.message)
@@ -119,7 +119,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
     fun handleMethodNotAllowed(ex: HttpRequestMethodNotSupportedException): ResponseEntity<ErrorResponse> {
         logger.warn("Method not allowed: {}", ex.message)
@@ -132,7 +132,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    
+
     @ExceptionHandler(ObjectOptimisticLockingFailureException::class, OptimisticLockingFailureException::class)
     fun handleOptimisticLockingFailure(ex: Exception): ResponseEntity<ErrorResponse> {
         logger.warn("Optimistic locking conflict detected: {}", ex.message)
@@ -145,7 +145,7 @@ class GlobalExceptionHandler {
         )
     }
 
-    
+
     @ExceptionHandler(Exception::class)
     fun handleGeneric(ex: Exception): ResponseEntity<ErrorResponse> {
         logger.error("Unexpected error: {}", ex.message, ex)
